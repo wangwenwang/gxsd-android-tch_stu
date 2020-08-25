@@ -73,7 +73,7 @@ import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -178,6 +178,13 @@ public class MainActivity extends FragmentActivity implements
 
         mContext = this;
         Log.d("LM", "程序启动");
+
+        new Thread() {
+            public void run() {
+
+                checkVersion("原生");
+            }
+        }.start();
 
         start_textView = (TextView) findViewById(R.id.textView5);
         new Thread() {
@@ -1390,9 +1397,7 @@ public class MainActivity extends FragmentActivity implements
         this.WhoCheckVersion = who;
 
         Log.d("LM", "检查apk及zip版本");
-        String params2 = "{\"tenantCode\":\"KDY\"}";
-        String paramsEncoding = URLEncoder.encode(params2);
-        String Strurl = Tools.getServerAddress(MainActivity.mContext) + "queryAppVersion.do?params=" + paramsEncoding;
+        String Strurl = "http://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=studentAndroid";
 
         HttpURLConnection conn=null;
         try {
@@ -1410,20 +1415,18 @@ public class MainActivity extends FragmentActivity implements
                 try {
                     JSONObject jsonObj = (JSONObject)(new JSONParser().parse(resultStr));
                     Log.i("LM",jsonObj.toJSONString() + "\n" + jsonObj.getClass());
-                    String status = (String)jsonObj.get("status");
-                    String Msg = (String)jsonObj.get("Msg");
+                    long code = (Long) jsonObj.get("code");
 
                     String apkDownloadUrl = null;
                     String server_apkVersion = null;
-                    String zipDownloadUrl = null;
-                    String server_zipVersion = null;
-                    if (status.equals("1")) {
+                    if (code == 200) {
 
-                        JSONObject dict = (JSONObject) jsonObj.get("data");
-                        apkDownloadUrl = (String) dict.get("downloadUrl");
-                        server_apkVersion = (String) dict.get("versionNo");
-                        zipDownloadUrl = (String) dict.get("zipDownloadUrl");
-                        server_zipVersion = (String) dict.get("zipVersionNo");
+                        JSONArray array = (JSONArray) jsonObj.get("data");
+                        if(array.size() > 0){
+                            JSONObject dict = (JSONObject) array.get(0);
+                            apkDownloadUrl = (String) dict.get("appDownloadUrl");
+                            server_apkVersion = (String) dict.get("appVersion");
+                        }
                     }
                     if (server_apkVersion != null && apkDownloadUrl != null) {
                         try {
@@ -1433,37 +1436,19 @@ public class MainActivity extends FragmentActivity implements
                             if (compareVersion == 1) {
                                 createUpdateDialog(current_apkVersion, server_apkVersion, apkDownloadUrl);
                             } else {
-                                Log.d("LM", "apk为最新版本");
-                                String curr_zipVersion = Tools.getAppZipVersion(mContext);
-                                compareVersion = Tools.compareVersion(server_zipVersion, curr_zipVersion);
-                                if (compareVersion == 1) {
-                                    Log.d("LM", "服务器zip版本：" + server_zipVersion + "    " + "本地zip版本：" + CURR_ZIP_VERSION);
-                                    CURR_ZIP_VERSION = server_zipVersion;
-                                    Log.d("LM", "更新zip...");
-
-                                    final String finalZipDownloadUrl = zipDownloadUrl;
+                                Log.d("LM", "zip为最新版本");
+                                if (WhoCheckVersion.equals("vue")) {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
 
-                                            showUpdataZipDialog(finalZipDownloadUrl);
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                            builder.setTitle("");
+                                            builder.setMessage("已经是最新版本！");
+                                            builder.setPositiveButton("确定", null);
+                                            builder.show();
                                         }
                                     });
-
-                                } else {
-                                    Log.d("LM", "zip为最新版本");
-                                    if(WhoCheckVersion.equals("vue")) {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-
-                                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                                builder.setTitle("");                                                builder.setMessage("已经是最新版本！");
-                                                builder.setPositiveButton("确定", null);
-                                                builder.show();
-                                            }
-                                        });
-                                    }
                                 }
                             }
                         } catch (Exception e) {

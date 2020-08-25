@@ -5,13 +5,13 @@ android {
     signingConfigs {
 
         release {
-            storeFile file('../gxsd.jks')
+            storeFile file('../gxsd_student.jks')
             storePassword "gxsd12"
             keyAlias "gxsd"
             keyPassword "gxsd12"
         }
         debug {
-            storeFile file('../gxsd.jks')
+            storeFile file('../gxsd_student.jks')
             storePassword "gxsd12"
             keyAlias "gxsd"
             keyPassword "gxsd12"
@@ -22,11 +22,11 @@ android {
     // 微信登录应用签名：1ea98a692ec423c9d59ce75ff7a2b3c7
 
     defaultConfig {
-        applicationId "mobi.gxsd.gxsd_android"
+        applicationId "mobi.gxsd.gxsd_android_student"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 13
-        versionName "1.0.5"
+        versionCode 1
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.tete = \"wechat_sdk_tst.runner.AndroidJUnitRunner"
     }
     buildTypes {
