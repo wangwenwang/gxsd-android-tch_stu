@@ -22,7 +22,13 @@ android {
     // 微信登录应用签名：1ea98a692ec423c9d59ce75ff7a2b3c7
 
     defaultConfig {
-        applicationId "mobi.gxsd.gxsd_android_student"
+        // 学生端
+        // mobi.gxsd.gxsd_android_student
+        // 21cde1b21f7cacb69a66b3ca0461db25(GenSignature)
+        // 老师端
+        // mobi.gxsd.gxsd_android_teacher
+        // 75877a946b1319708e89c3acd17b2df5(GenSignature)
+        applicationId "mobi.gxsd.gxsd_android_teacher"
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 1
