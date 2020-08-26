@@ -1400,7 +1400,7 @@ public class MainActivity extends FragmentActivity implements
         this.WhoCheckVersion = who;
 
         Log.d("LM", "检查apk及zip版本");
-        String Strurl = "http://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=studentAndroid";
+        String Strurl = "http://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=teacherAndroid";
 
         HttpURLConnection conn=null;
         try {
