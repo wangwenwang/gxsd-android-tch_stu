@@ -60,7 +60,7 @@
             android:launchMode="standard"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="mobi.gxsd.gxsd_android.wxapi.WXEntryActivity" android:exported="true" />
+        <activity android:name="mobi.gxsd.gxsd_android_student.wxapi.WXEntryActivity" android:exported="true" />
 
     </application>
 

@@ -438,9 +438,9 @@ public class MainActivity extends FragmentActivity implements
         mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 //        mWebView.loadUrl("file:///data/data/" + getPackageName() + "/upzip/dist/index.html");
         // 老师
-        mWebView.loadUrl("https://gxsd.mobi/gxsdTeacherApk/gxsd-test");
+//        mWebView.loadUrl("https://gxsd.mobi/gxsdTeacherApk/gxsd-test");
         // 学生
-//        mWebView.loadUrl("https://gxsd.mobi/gxsdStudentApk/gxsd-test");
+        mWebView.loadUrl("https://gxsd.mobi/gxsdStudentApk/gxsd-test");
         Tools.setAppLastTimeVersion(mContext);
         lastVersion = Tools.getAppLastTimeVersion(mContext);
         Log.d("LM", "上次启动记录的版本号已设置为: " + lastVersion);
@@ -550,7 +550,7 @@ public class MainActivity extends FragmentActivity implements
                     new Thread() {
                         public void run() {
                             try {
-                                sleep(5000);
+                                sleep(10000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -1400,7 +1400,8 @@ public class MainActivity extends FragmentActivity implements
         this.WhoCheckVersion = who;
 
         Log.d("LM", "检查apk及zip版本");
-        String Strurl = "http://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=teacherAndroid";
+//        String Strurl = "https://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=studentAndroid";
+        String Strurl = "https://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=teacherAndroid";
 
         HttpURLConnection conn=null;
         try {

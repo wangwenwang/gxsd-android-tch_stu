@@ -1,4 +1,4 @@
-package mobi.gxsd.gxsd_android.wxapi;
+package mobi.gxsd.gxsd_android_student.wxapi;
 
 import android.app.Activity;
 import android.os.Bundle;
