@@ -23,12 +23,16 @@ android {
 
     defaultConfig {
         // 学生端
-        // mobi.gxsd.gxsd_android_student
-        // 21cde1b21f7cacb69a66b3ca0461db25(GenSignature)
+        // 包名：mobi.gxsd.gxsd_android_student
+        // GenSignature：21cde1b21f7cacb69a66b3ca0461db25
+        // AppID: wxdce29e3a76e0c723
+        // AppSecret: 65bdac5dee3677bb8150b22a87abece7
         // 老师端
-        // mobi.gxsd.gxsd_android_teacher
-        // 75877a946b1319708e89c3acd17b2df5(GenSignature)
-        applicationId "mobi.gxsd.gxsd_android_teacher"
+        // 包名：mobi.gxsd.gxsd_android_teacher
+        // GenSignature：75877a946b1319708e89c3acd17b2df5
+        // AppID: wxe6d00f631717f3c1
+        // AppSecret: 63f13ceaad54fe8ee638dc08052ba5b6
+        applicationId "mobi.gxsd.gxsd_android_student"
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 1
