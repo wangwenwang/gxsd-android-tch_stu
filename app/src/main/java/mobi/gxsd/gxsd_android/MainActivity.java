@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
@@ -70,6 +71,7 @@ import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
@@ -94,6 +96,7 @@ import java.util.Date;
 import java.util.List;
 
 import static android.widget.Toast.LENGTH_LONG;
+import static mobi.gxsd.gxsd_android.Tools.Constants.WXLogin_AppID;
 
 
 public class MainActivity extends FragmentActivity implements
@@ -123,7 +126,7 @@ public class MainActivity extends FragmentActivity implements
 
 
     // 微信开放平台APP_ID
-    private static final String APP_ID = Constants.WXLogin_AppID;
+    private static final String APP_ID = WXLogin_AppID;
 
     static public IWXAPI mWxApi;
 
@@ -438,9 +441,9 @@ public class MainActivity extends FragmentActivity implements
         mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 //        mWebView.loadUrl("file:///data/data/" + getPackageName() + "/upzip/dist/index.html");
         // 老师
-//        mWebView.loadUrl("https://gxsd.mobi/gxsdTeacherApk/gxsd-test");
+        mWebView.loadUrl("https://gxsd.mobi/gxsdTeacherApk/gxsd-test");
         // 学生
-        mWebView.loadUrl("https://gxsd.mobi/gxsdStudentApk/gxsd-test");
+//        mWebView.loadUrl("https://gxsd.mobi/gxsdStudentApk/gxsd-test");
         Tools.setAppLastTimeVersion(mContext);
         lastVersion = Tools.getAppLastTimeVersion(mContext);
         Log.d("LM", "上次启动记录的版本号已设置为: " + lastVersion);
@@ -1225,6 +1228,47 @@ public class MainActivity extends FragmentActivity implements
                         WXsharePic("fd", false, takeScreenShot(MainActivity.this));
                     }
                 });
+            } else if (exceName.equals("邀请加入班级")) {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 通过appId得到IWXAPI这个对象
+                        IWXAPI wxapi = WXAPIFactory.createWXAPI(mContext, WXLogin_AppID);
+                        // 检查手机或者模拟器是否安装了微信
+                        if (!wxapi.isWXAppInstalled()) {
+                            Toast.makeText(mContext, "您还没有安装微信", LENGTH_LONG).show();
+                            return;
+                        }
+
+                        // 初始化一个WXWebpageObject对象
+                        WXWebpageObject webpageObject = new WXWebpageObject();
+                        // 填写网页的url
+                        webpageObject.webpageUrl = inputName;
+
+                        // 用WXWebpageObject对象初始化一个WXMediaMessage对象
+                        WXMediaMessage msg = new WXMediaMessage(webpageObject);
+                        // 填写网页标题、描述、位图
+                        msg.title = "家长们，快帮助孩子加入我的班级吧！";
+                        msg.description = "让孩子提高阅读速度";
+                        // 如果没有位图，可以传null，会显示默认的图片
+                        Bitmap bitmap =  BitmapFactory.decodeStream(getClass().getResourceAsStream("/res/drawable/icon.png"));
+                        msg.setThumbImage(bitmap);
+
+                        // 构造一个Req
+                        SendMessageToWX.Req req = new SendMessageToWX.Req();
+                        // transaction用于唯一标识一个请求（可自定义）
+                        req.transaction = "webpage";
+                        // 上文的WXMediaMessage对象
+                        req.message = msg;
+                        // SendMessageToWX.Req.WXSceneSession是分享到好友会话
+                        // SendMessageToWX.Req.WXSceneTimeline是分享到朋友圈
+                        req.scene = SendMessageToWX.Req.WXSceneSession;
+
+                        // 向微信发送请求
+                        wxapi.sendReq(req);
+                    }
+                });
             }
         }
 
@@ -1400,8 +1444,8 @@ public class MainActivity extends FragmentActivity implements
         this.WhoCheckVersion = who;
 
         Log.d("LM", "检查apk及zip版本");
-        String Strurl = "https://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=studentAndroid";
-//        String Strurl = "https://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=teacherAndroid";
+//        String Strurl = "https://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=studentAndroid";
+        String Strurl = "https://www.gxsd.mobi/gxsd-dev/read/task/getAppUpdateByAppType?appType=teacherAndroid";
 
         HttpURLConnection conn=null;
         try {

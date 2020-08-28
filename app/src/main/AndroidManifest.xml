@@ -134,10 +134,17 @@
             android:process=":remote" >
         </service>
 
+<!--        学生student-->
+<!--        <meta-data-->
+<!--            android:name="com.amap.api.v2.apikey"-->
+<!--            android:value="ddc7b489d5e94bff1db905fc7077f20f"/>-->
 
+<!--        老师teacher-->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="ddc7b489d5e94bff1db905fc7077f20f"/>
+            android:value="8cecd1578db77e4fd90081acb9fce0a7"/>
+
+
 
 
         <service android:name="net.posprinter.service.PosprinterService" />
@@ -145,9 +152,16 @@
 
         <!-- AK鉴权 -->
         <!-- meta-data需要写在application中 -->
+<!--        学生student-->
+<!--        <meta-data-->
+<!--            android:name="com.baidu.lbsapi.API_KEY"-->
+<!--            android:value="E647YIYq4rckW8HU6esluLor9EKGKdP7" />-->
+
+
+<!--        老师teacher-->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="E647YIYq4rckW8HU6esluLor9EKGKdP7" />
+            android:value="Ew9xvxWokoz2iTuFqblFW0XxqABla2Eg" />
 
 
         <activity
@@ -173,7 +187,7 @@
             android:launchMode="standard"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="mobi.gxsd.gxsd_android_student.wxapi.WXEntryActivity" android:exported="true" />
+        <activity android:name="mobi.gxsd.gxsd_android_teacher.wxapi.WXEntryActivity" android:exported="true" />
 
     </application>
 
