@@ -149,7 +149,7 @@ public class MainActivity extends FragmentActivity implements
     private Uri mImageUri;
     private static final String FILE_PROVIDER_AUTHORITY = "mobi.gxsd.gxsd_android.fileprovider";
 
-    private String CURR_ZIP_VERSION = "0.9.9";
+    private String CURR_ZIP_VERSION = "0.0.1";
     private String WhoCheckVersion;
 
     //检测版本更新
@@ -439,9 +439,9 @@ public class MainActivity extends FragmentActivity implements
 //        }
 
         mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-//        mWebView.loadUrl("file:///data/data/" + getPackageName() + "/upzip/dist/index.html");
+        mWebView.loadUrl("file:///data/data/" + getPackageName() + "/upzip/dist/index.html");
         // 老师
-        mWebView.loadUrl("https://gxsd.mobi/gxsdTeacherApk/gxsd-test");
+//        mWebView.loadUrl("https://gxsd.mobi/gxsdTeacherApk/gxsd-test");
         // 学生
 //        mWebView.loadUrl("https://gxsd.mobi/gxsdStudentApk/gxsd-test");
         Tools.setAppLastTimeVersion(mContext);
@@ -1377,6 +1377,50 @@ public class MainActivity extends FragmentActivity implements
                 }.start();
             }
         }
+        @JavascriptInterface
+        public void share_url(final String url, final String title, final String description) {
+
+            Log.d("LM", "微信分享网页");
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 通过appId得到IWXAPI这个对象
+                    IWXAPI wxapi = WXAPIFactory.createWXAPI(mContext, WXLogin_AppID);
+                    // 检查手机或者模拟器是否安装了微信
+                    if (!wxapi.isWXAppInstalled()) {
+                        Toast.makeText(mContext, "您还没有安装微信", LENGTH_LONG).show();
+                        return;
+                    }
+                    // 初始化一个WXWebpageObject对象
+                    WXWebpageObject webpageObject = new WXWebpageObject();
+                    // 填写网页的url
+                    webpageObject.webpageUrl = url;
+
+                    // 用WXWebpageObject对象初始化一个WXMediaMessage对象
+                    WXMediaMessage msg = new WXMediaMessage(webpageObject);
+                    // 填写网页标题、描述、位图
+                    msg.title = title;
+                    msg.description = description;
+                    // 如果没有位图，可以传null，会显示默认的图片
+                    Bitmap bitmap = BitmapFactory.decodeStream(getClass().getResourceAsStream("/res/drawable/icon.png"));
+                    msg.setThumbImage(bitmap);
+
+                    // 构造一个Req
+                    SendMessageToWX.Req req = new SendMessageToWX.Req();
+                    // transaction用于唯一标识一个请求（可自定义）
+                    req.transaction = "webpage";
+                    // 上文的WXMediaMessage对象
+                    req.message = msg;
+                    // SendMessageToWX.Req.WXSceneSession是分享到好友会话
+                    // SendMessageToWX.Req.WXSceneTimeline是分享到朋友圈
+                    req.scene = SendMessageToWX.Req.WXSceneSession;
+
+                    // 向微信发送请求
+                    wxapi.sendReq(req);
+                }
+            });
+        }
     }
 
 
@@ -1467,6 +1511,8 @@ public class MainActivity extends FragmentActivity implements
 
                     String apkDownloadUrl = null;
                     String server_apkVersion = null;
+                    String zipDownloadUrl = null;
+                    String server_zipVersion = null;
                     if (code == 200) {
 
                         JSONArray array = (JSONArray) jsonObj.get("data");
@@ -1474,6 +1520,8 @@ public class MainActivity extends FragmentActivity implements
                             JSONObject dict = (JSONObject) array.get(0);
                             apkDownloadUrl = (String) dict.get("appDownloadUrl");
                             server_apkVersion = (String) dict.get("appVersion");
+                            zipDownloadUrl = (String) dict.get("vueDownloadUrl");
+                            server_zipVersion = (String) dict.get("vueVersion");
                         }
                     }
                     if (server_apkVersion != null && apkDownloadUrl != null) {
@@ -1484,19 +1532,37 @@ public class MainActivity extends FragmentActivity implements
                             if (compareVersion == 1) {
                                 createUpdateDialog(current_apkVersion, server_apkVersion, apkDownloadUrl);
                             } else {
-                                Log.d("LM", "zip为最新版本");
-                                if (WhoCheckVersion.equals("vue")) {
+                                Log.d("LM", "apk为最新版本");
+                                String curr_zipVersion = Tools.getAppZipVersion(mContext);
+                                compareVersion = Tools.compareVersion(server_zipVersion, curr_zipVersion);
+                                if (compareVersion == 1) {
+                                    Log.d("LM", "服务器zip版本：" + server_zipVersion + "    " + "本地zip版本：" + CURR_ZIP_VERSION);
+                                    CURR_ZIP_VERSION = server_zipVersion;
+                                    Log.d("LM", "更新zip...");
+
+                                    final String finalZipDownloadUrl = zipDownloadUrl;
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
 
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                            builder.setTitle("");
-                                            builder.setMessage("已经是最新版本！");
-                                            builder.setPositiveButton("确定", null);
-                                            builder.show();
+                                            showUpdataZipDialog(finalZipDownloadUrl);
                                         }
                                     });
+
+                                } else {
+                                    Log.d("LM", "zip为最新版本");
+                                    if(WhoCheckVersion.equals("vue")) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                                builder.setTitle("");                                                builder.setMessage("已经是最新版本！");
+                                                builder.setPositiveButton("确定", null);
+                                                builder.show();
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         } catch (Exception e) {
