@@ -594,7 +594,30 @@ public class MainActivity extends FragmentActivity implements
 
     private void openImageChooserActivity() {
 
-        takeCamera();
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("拍照/相册");
+        builder.setPositiveButton("相册", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                takePhoto();
+            }
+        });
+        builder.setNegativeButton("拍照", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                takeCamera();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    //选择图片
+    private void takePhoto() {
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("image/*");
+        startActivityForResult(Intent.createChooser(i, "Image Chooser"), FILE_CHOOSER_RESULT_CODE);
     }
 
     //拍照
