@@ -183,7 +183,24 @@ public class MainActivity extends FragmentActivity implements
         new Thread() {
             public void run() {
 
-                checkVersion("原生");
+                // 等待用户赋予存储权限
+                for (int i = 0; i < 99; i++) {
+
+                    PackageManager pm = getPackageManager();
+                    boolean permission = (PackageManager.PERMISSION_GRANTED ==
+                            pm.checkPermission("android.permission.WRITE_EXTERNAL_STORAGE", "mobi.gxsd.gxsd_android_student"));
+                    if (permission) {
+                        checkVersion("原生");
+                        break;
+                    }else{
+                        Log.d("LM", "缺少存储权限，等待1秒...");
+                    }
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }.start();
 
