@@ -166,8 +166,6 @@ public class MainActivity extends FragmentActivity implements
     //声明AMapLocationClientOption对象
     public AMapLocationClientOption mLocationOption = null;
 
-    TextView start_textView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,24 +184,6 @@ public class MainActivity extends FragmentActivity implements
             public void run() {
 
                 checkVersion("原生");
-            }
-        }.start();
-
-        start_textView = (TextView) findViewById(R.id.textView5);
-        new Thread() {
-            public void run() {
-                try {
-                    sleep(7000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        start_textView.setVisibility(View.GONE);
-                    }
-                });
             }
         }.start();
 
