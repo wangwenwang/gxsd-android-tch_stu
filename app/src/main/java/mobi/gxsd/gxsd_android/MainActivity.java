@@ -1728,14 +1728,15 @@ public class MainActivity extends FragmentActivity implements
                 return false;
             }
 
+            String pkName = this.getPackageName();
             // 首页
-            String Index = "file:///data/data/mobi.gxsd.gxsd_android/upzip/dist/index.html#/Index";
-            // 下单
-            String Waybill = "file:///data/data/mobi.gxsd.gxsd_android/upzip/dist/index.html#/SalesOrder";
-            // 查单
-            String ReportForms = "file:///data/data/mobi.gxsd.gxsd_android/upzip/dist/index.html#/QuerySalesOrder";
+            String Index = "file:///data/data/" + pkName + "/upzip/dist/index.html#/index";
+            // 任务
+            String Waybill = "file:///data/data/" + pkName + "/upzip/dist/index.html#/task_stu";
+            // 阅读存折
+            String ReportForms = "file:///data/data/" + pkName + "/upzip/dist/index.html#/read_passbook";
             // 我的
-            String HomeIndex = "file:///data/data/mobi.gxsd.gxsd_android/upzip/dist/index.html#/Home";
+            String HomeIndex = "file:///data/data/" + pkName + "/upzip/dist/index.html#/my";
 
             // 主菜单时不允许返回上一页
             if (
@@ -1745,7 +1746,11 @@ public class MainActivity extends FragmentActivity implements
                             curURL.indexOf(HomeIndex + "?") != -1 || curURL.equals(HomeIndex)
                     ) {
 
-                Log.d("LM", "禁止返回上一页2：" + curURL);
+                Log.d("LM", "到达程序根节点后，点击安卓自带返回键，返回到桌面" + curURL);
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                startActivity(intent);
                 return false;
             }
             mWebView.goBack();
