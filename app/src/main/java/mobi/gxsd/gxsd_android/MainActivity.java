@@ -421,10 +421,10 @@ public class MainActivity extends FragmentActivity implements
 
 
         boolean isExists = Tools.fileIsExists("/data/data/" + getPackageName() + "/upzip/dist/index.html");
-//        if (lastVersion.equals(mAppVersion)) {
-//
-//            Log.d("LM", "html已存在，无需解压");
-//        } else {
+        if (lastVersion.equals(mAppVersion)) {
+
+            Log.d("LM", "html已存在，无需解压");
+        } else {
 
             Log.d("LM", "html不存在或有新版本，开始解压");
             try {
@@ -433,7 +433,7 @@ public class MainActivity extends FragmentActivity implements
                 e.printStackTrace();
             }
             Log.d("LM", "解压完成，加载html");
-//        }
+        }
 
         mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         mWebView.loadUrl("file:///data/data/" + getPackageName() + "/upzip/dist/index.html");
