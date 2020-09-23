@@ -1731,8 +1731,10 @@ public class MainActivity extends FragmentActivity implements
             String pkName = this.getPackageName();
             // 首页
             String Index = "file:///data/data/" + pkName + "/upzip/dist/index.html#/index";
-            // 任务
+            // 学生任务
             String Waybill = "file:///data/data/" + pkName + "/upzip/dist/index.html#/task_stu";
+            // 老师任务
+            String task_tch = "file:///data/data/" + pkName + "/upzip/dist/index.html#/task_tch";
             // 阅读存折
             String ReportForms = "file:///data/data/" + pkName + "/upzip/dist/index.html#/read_passbook";
             // 我的
@@ -1742,6 +1744,7 @@ public class MainActivity extends FragmentActivity implements
             if (
                     curURL.indexOf(Index + "?") != -1 || curURL.equals(Index) ||
                             curURL.indexOf(Waybill + "?") != -1 || curURL.equals(Waybill) ||
+                            curURL.indexOf(task_tch + "?") != -1 || curURL.equals(task_tch) ||
                             curURL.indexOf(ReportForms + "?") != -1 || curURL.equals(ReportForms) ||
                             curURL.indexOf(HomeIndex + "?") != -1 || curURL.equals(HomeIndex)
                     ) {
