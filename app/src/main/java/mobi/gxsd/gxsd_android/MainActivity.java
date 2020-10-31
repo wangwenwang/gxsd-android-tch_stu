@@ -435,7 +435,6 @@ public class MainActivity extends FragmentActivity implements
             Log.d("LM", "解压完成，加载html");
         }
 
-        mWebView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         mWebView.loadUrl("file:///data/data/" + getPackageName() + "/upzip/dist/index.html");
         // 老师
 //        mWebView.loadUrl("https://gxsd.mobi/gxsdTeacherApk/gxsd-test");
