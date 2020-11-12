@@ -43,6 +43,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +60,8 @@ import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baoyz.actionsheet.ActionSheet;
+
+import mobi.gxsd.gxsd_android.Tools.AnimationUtils;
 import mobi.gxsd.gxsd_android.Tools.Constants;
 import mobi.gxsd.gxsd_android.Tools.DownPicUtil;
 import mobi.gxsd.gxsd_android.Tools.LocationApplication;
@@ -166,10 +169,20 @@ public class MainActivity extends FragmentActivity implements
     //声明AMapLocationClientOption对象
     public AMapLocationClientOption mLocationOption = null;
 
+    // vue已加载完成，关闭启动图
+    private Boolean launch_HIDDEN = false;
+
+    // 启动图
+    LinearLayout laumch_Layout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 配合启动图，遮挡住自动登录的过程
+        laumch_Layout = (LinearLayout)findViewById(R.id.launch_image);
+        laumch_Layout.setBackgroundResource(R.drawable.launch_image);
 
         // 修复targetSdkVersion为28时，拍照闪退问题
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -271,6 +284,35 @@ public class MainActivity extends FragmentActivity implements
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 Log.d("LM", "当前位置: " + url);
+
+                new Thread() {
+                    public void run() {
+                        SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", MODE_MULTI_PROCESS);
+                        String user_info = p.getString("user_info", "");
+                        Log.d("LM", "run: ");
+                        int delay = 0;
+                        // 本地没有账号密码，没有自动登录功能，不能等待自动
+                        if(user_info.equals("")){
+                            delay = 1500;
+                        }else{
+                            delay = 10000;
+                        }
+                        try {
+                            sleep(delay);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!launch_HIDDEN) {
+                                    launch_HIDDEN = true;
+                                    AnimationUtils.showAndHiddenAnimation(laumch_Layout, AnimationUtils.AnimationState.STATE_HIDDEN, 500);
+                                }
+                            }
+                        });
+                    }
+                }.start();
             }
 
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -1200,6 +1242,25 @@ public class MainActivity extends FragmentActivity implements
             // 存储用户信息
             else if(exceName.equals("用户信息")) {
 
+                // 接收用户信息，表明登录成功，结束启动页（预留0.8秒给vue渲染，渐变时长0.5秒）
+                if(!launch_HIDDEN){
+                    launch_HIDDEN = true;
+                    new Thread() {
+                        public void run() {
+                            try {
+                                sleep(800);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AnimationUtils.showAndHiddenAnimation(laumch_Layout, AnimationUtils.AnimationState.STATE_HIDDEN, 500);
+                                }
+                            });
+                        }
+                    }.start();
+                }
                 SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", Context.MODE_MULTI_PROCESS);
                 p.edit().putString("user_info", inputName).commit();
                 Log.i("LM","接收 | 用户信息");
