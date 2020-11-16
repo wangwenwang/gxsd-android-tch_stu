@@ -152,7 +152,7 @@ public class MainActivity extends FragmentActivity implements
     private Uri mImageUri;
     private static final String FILE_PROVIDER_AUTHORITY = "mobi.gxsd.gxsd_android.fileprovider";
 
-    private String CURR_ZIP_VERSION = "1.2.8";
+    private String CURR_ZIP_VERSION = "1.3.1";
     private String WhoCheckVersion;
 
     //检测版本更新
