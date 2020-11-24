@@ -70,6 +70,9 @@
     <string name="con_failed">连接失败</string>
     <string name="con_has_discon">连接已断开</string>
     <string name="text_for">请输入要打印的内容!</string>
+
+    <string name="update_title">发现新版本</string>
+    <string name="updatecontent">1.</string>
 </resources>
 
 

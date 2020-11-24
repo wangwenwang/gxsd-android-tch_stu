@@ -48,7 +48,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.allenliu.versionchecklib.v2.AllenVersionChecker;
+import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
 import com.allenliu.versionchecklib.v2.builder.UIData;
+import com.allenliu.versionchecklib.v2.callback.CustomVersionDialogListener;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.android.volley.RequestQueue;
@@ -61,6 +63,7 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baoyz.actionsheet.ActionSheet;
 
+import mobi.gxsd.gxsd_android.CheckVersionLib.BaseDialog;
 import mobi.gxsd.gxsd_android.Tools.AnimationUtils;
 import mobi.gxsd.gxsd_android.Tools.Constants;
 import mobi.gxsd.gxsd_android.Tools.DownPicUtil;
@@ -1593,6 +1596,7 @@ public class MainActivity extends FragmentActivity implements
                     String server_apkVersion = null;
                     String zipDownloadUrl = null;
                     String server_zipVersion = null;
+                    String server_appContent = null;
                     if (code == 200) {
 
                         JSONArray array = (JSONArray) jsonObj.get("data");
@@ -1602,6 +1606,8 @@ public class MainActivity extends FragmentActivity implements
                             server_apkVersion = (String) dict.get("appVersion");
                             zipDownloadUrl = (String) dict.get("vueDownloadUrl");
                             server_zipVersion = (String) dict.get("vueVersion");
+                            server_appContent = (String) dict.get("appContent");
+                            server_appContent = (server_appContent == null) ? "" : server_appContent;
                         }
                     }
                     if (server_apkVersion != null && apkDownloadUrl != null) {
@@ -1610,7 +1616,7 @@ public class MainActivity extends FragmentActivity implements
                             Log.d("LM","server_apkVersion:" + server_apkVersion + "\tcurrent_apkVersion:" + current_apkVersion);
                             int compareVersion = Tools.compareVersion(server_apkVersion, current_apkVersion);
                             if (compareVersion == 1) {
-                                createUpdateDialog(current_apkVersion, server_apkVersion, apkDownloadUrl);
+                                createUpdateDialog(current_apkVersion, server_apkVersion, apkDownloadUrl, server_appContent);
                             } else {
                                 Log.d("LM", "apk为最新版本");
                                 String curr_zipVersion = Tools.getAppZipVersion(mContext);
@@ -1752,23 +1758,56 @@ public class MainActivity extends FragmentActivity implements
     };
 
     /**
+     * 强制更新操作
+     * 通常关闭整个activity所有界面，这里方便测试直接关闭当前activity
+     */
+    private void forceUpdate() {
+
+        Toast.makeText(this, "请升级应用", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 务必用库传回来的context 实例化你的dialog
+     * 自定义的dialog UI参数展示，使用versionBundle
+     *
+     * @return
+     */
+    private CustomVersionDialogListener createCustomDialogTwo() {
+        return (context, versionBundle) -> {
+            BaseDialog baseDialog = new BaseDialog(context, R.style.BaseDialog, R.layout.custom_dialog_two_layout);
+            TextView textView = baseDialog.findViewById(R.id.tv_msg);
+            textView.setText(versionBundle.getContent());
+            // 强制更新，不允许退出弹窗，不允许安卓自带返回键
+            // baseDialog.setCanceledOnTouchOutside(true);
+            // 设置true，才会执行forceUpdate方法
+            baseDialog.setCancelable(false);
+            return baseDialog;
+        };
+    }
+
+    /**
      * 版本更新对话框
      *
      * @param currentVersion 当前版本versionName
      * @param version        最新版本versionName
      * @param downUrl        最新版本安装包下载url
      */
-    public void createUpdateDialog(String currentVersion, String version, final String downUrl) {
+    public void createUpdateDialog(String currentVersion, String version, final String downUrl, String server_appContent) {
 
+        Log.d("LM", "createUpdateDialog: ");
+        Log.d("LM", server_appContent);
         AllenVersionChecker
-            .getInstance()
-            .downloadOnly(
-                UIData.create()
-                    .setDownloadUrl(downUrl)
-                    .setTitle("更新版本")
-                    .setContent("当前版本：" + currentVersion + "\n最新版本：" + version)
-            )
-            .executeMission(mContext);
+                .getInstance()
+                .downloadOnly(
+                        UIData.create()
+                                .setDownloadUrl(downUrl)
+                                .setTitle("更新版本")
+                                .setContent(server_appContent))
+                .setForceUpdateListener(() -> {
+                    forceUpdate();
+                })
+                .setCustomVersionDialogListener(createCustomDialogTwo())
+                .executeMission(mContext);
     }
 
     /**
