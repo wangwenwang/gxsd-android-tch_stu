@@ -165,7 +165,7 @@
 
 
         <activity
-            android:name="mobi.gxsd.gxsd_android.MainActivity"
+            android:name="mobi.gxsd.gxsd_android.LaumchActivity"
             android:theme="@style/AppTheme.StartingWindowTheme"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait">
@@ -175,6 +175,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="mobi.gxsd.gxsd_android.MainActivity"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"/>
 
         <!--打印-->
         <activity
