@@ -63,6 +63,7 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baoyz.actionsheet.ActionSheet;
 
+import changed.org.apache.commons.codec.binary.Base64;
 import mobi.gxsd.gxsd_android.CheckVersionLib.BaseDialog;
 import mobi.gxsd.gxsd_android.Tools.AnimationUtils;
 import mobi.gxsd.gxsd_android.Tools.Constants;
@@ -73,6 +74,13 @@ import mobi.gxsd.gxsd_android.Tools.SystemUtil;
 import mobi.gxsd.gxsd_android.Tools.Tools;
 import mobi.gxsd.gxsd_android.print.PrintActivity;
 import mobi.gxsd.gxsd_android.track.OrderTrackActivity;
+
+import com.iflytek.cloud.EvaluatorListener;
+import com.iflytek.cloud.EvaluatorResult;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechEvaluator;
+import com.iflytek.cloud.SpeechUtility;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
@@ -87,11 +95,15 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -100,6 +112,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static android.widget.Toast.LENGTH_LONG;
 import static mobi.gxsd.gxsd_android.Tools.Constants.WXLogin_AppID;
@@ -177,6 +190,11 @@ public class MainActivity extends FragmentActivity implements
 
     // 启动图
     LinearLayout laumch_Layout;
+
+    // 评测对象
+    private SpeechEvaluator mIse;
+    private boolean is_begin;
+    private String result_xmlBase64;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -506,6 +524,7 @@ public class MainActivity extends FragmentActivity implements
 
         // 注册微信登录
         registToWX();
+        SpeechUtility.createUtility(MainActivity.this, "appid=5f9a1b08");
     }
 
     @Override
@@ -581,7 +600,9 @@ public class MainActivity extends FragmentActivity implements
             if (Build.VERSION.SDK_INT >= 23) {
                 if (MPermissionsUtil.checkAndRequestPermissions(MainActivity.this,
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}
+                                Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.LOCATION_HARDWARE,Manifest.permission.WRITE_SETTINGS,
+                                Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.RECORD_AUDIO}
                         , RequestPermission_STATUS_CODE0)) {
 
                     new Thread() {
@@ -1504,6 +1525,29 @@ public class MainActivity extends FragmentActivity implements
                 }
             });
         }
+
+        @JavascriptInterface
+        public void callandroid_ise(String exceName, String txt) {
+            Log.d("LM", "录音");
+            if (exceName.equals("录音")) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        read_click(txt);
+                    }
+                });
+            } else if (exceName.equals("请求评测结果")) {
+                uploadMp3();
+            } else if (exceName.equals("销毁录音")) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopEva();
+                        is_begin = false;
+                    }
+                });
+            }
+        }
     }
 
 
@@ -1861,4 +1905,197 @@ public class MainActivity extends FragmentActivity implements
         }
         return false;
     }
+
+    public void read_click(String text) {
+        is_begin = !is_begin;
+        if (is_begin) {
+            Log.d("LM", "开始录制");
+            startEva(text);
+            String url = "javascript:LM_AndroidIOSToVue_startRecord()";
+            MainActivity.mWebView.loadUrl(url);
+        } else {
+            Log.d("LM", "结束录制");
+            stopEva();
+            String url = "javascript:LM_AndroidIOSToVue_stopRecord()";
+            MainActivity.mWebView.loadUrl(url);
+        }
+    }
+
+    // 结束评测
+    public void stopEva() {
+        mIse.stopEvaluating();
+    }
+
+    public void uploadMp3() {
+        Log.d("LM", "上传音频文件");
+        String BOUNDARY = UUID.randomUUID().toString();  //边界标识   随机生成
+        String PREFIX = "--", LINE_END = "\r\n";
+        String CONTENT_TYPE = "multipart/form-data";   //内容类型
+        try {
+            URL url = new URL("https://www.gxsd.mobi/gxsd-test/system/upload");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(20 * 1000);
+            conn.setConnectTimeout(20 * 1000);
+            conn.setDoInput(true);  //允许输入流
+            conn.setDoOutput(true); //允许输出流
+            conn.setUseCaches(false);  //不允许使用缓存
+            conn.setRequestMethod("POST");  //请求方式
+            conn.setRequestProperty("Charset", "utf-8");  //设置编码
+            conn.setRequestProperty("connection", "keep-alive");
+            conn.setRequestProperty("Content-Type", CONTENT_TYPE + ";boundary=" + BOUNDARY);
+            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/msc/ise.wav");
+            if (file != null) {
+                DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+                StringBuffer sb = new StringBuffer();
+                sb.append(PREFIX);
+                sb.append(BOUNDARY);
+                sb.append(LINE_END);
+                sb.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + file.getName() + "\"" + LINE_END);
+                sb.append("Content-Type: application/octet-stream; charset=" + "utf-8" + LINE_END);
+                sb.append(LINE_END);
+                dos.write(sb.toString().getBytes());
+                InputStream is = new FileInputStream(file);
+                byte[] bytes = new byte[1024];
+                int len = 0;
+                while ((len = is.read(bytes)) != -1) {
+                    dos.write(bytes, 0, len);
+                }
+                is.close();
+                dos.write(LINE_END.getBytes());
+                byte[] end_data = (PREFIX + BOUNDARY + PREFIX + LINE_END).getBytes();
+                dos.write(end_data);
+                dos.flush();
+                int res = conn.getResponseCode();
+                Log.e("LM", "response code:" + res);
+                if(res == 200) {
+                    Log.e("LM", "request success");
+                    InputStream input = conn.getInputStream();
+                    StringBuffer sb1 = new StringBuffer();
+                    int ss;
+                    while ((ss = input.read()) != -1) {
+                        sb1.append((char) ss);
+                    }
+                    String result = sb1.toString();
+                    JSONObject jsonObj = null;
+                    try {
+                        jsonObj = (JSONObject)(new JSONParser().parse(result));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e("LM", "result : " + result);
+                    String mp3Url = jsonObj.get("data").toString();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String url_to_vue = "javascript:LM_AndroidIOSToVue_read_gsw_xml_result('" + result_xmlBase64 + "','" + mp3Url + "')";
+                            MainActivity.mWebView.loadUrl(url_to_vue);
+                        }
+                    });
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 开始评测
+    private void startEva(String text) {
+        mIse = SpeechEvaluator.createEvaluator(MainActivity.this, null);
+        if (mIse == null) {
+            return;
+        }
+        SharedPreferences pref = getSharedPreferences("ise_settings", MODE_PRIVATE);
+        // 语音输入超时时间，即用户最多可以连续说多长时间；
+        String speech_timeout = pref.getString(SpeechConstant.KEY_SPEECH_TIMEOUT, "-1");
+        mIse.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+        mIse.setParameter(SpeechConstant.ISE_CATEGORY, "read_chapter");
+        mIse.setParameter(SpeechConstant.TEXT_ENCODING, "utf-8");
+        mIse.setParameter(SpeechConstant.VAD_BOS, "10000");
+        mIse.setParameter(SpeechConstant.VAD_EOS, "10000");
+        mIse.setParameter(SpeechConstant.KEY_SPEECH_TIMEOUT, speech_timeout);
+        mIse.setParameter(SpeechConstant.RESULT_LEVEL, "complete");
+        mIse.setParameter(SpeechConstant.AUDIO_FORMAT_AUE,"opus");
+        // 设置音频保存路径，保存音频格式支持pcm、wav，设置路径为sd卡请注意WRITE_EXTERNAL_STORAGE权限
+        mIse.setParameter(SpeechConstant.AUDIO_FORMAT,"wav");
+        mIse.setParameter(SpeechConstant.ISE_AUDIO_PATH, Environment.getExternalStorageDirectory().getAbsolutePath() + "/msc/ise.wav");
+        Log.d("LM", "--------: " + Environment.getExternalStorageDirectory().getAbsolutePath() + "/msc/ise.wav");
+        //通过writeaudio方式直接写入音频时才需要此设置
+//        mIse.setParameter(SpeechConstant.AUDIO_SOURCE,"-1");
+        int ret = mIse.startEvaluating(text, null, mEvaluatorListener);
+        Log.d("LM", "onClick: ");
+    }
+
+    @Override
+    protected void onResume() {
+        // 开放统计 移动数据统计分析
+		/*FlowerCollector.onResume(IseDemo.this);
+		FlowerCollector.onPageStart(TAG);*/
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+/*		// 开放统计 移动数据统计分析
+		FlowerCollector.onPageEnd(TAG);
+		FlowerCollector.onPause(IseDemo.this);*/
+        super.onPause();
+    }
+
+    // 评测监听接口
+    private EvaluatorListener mEvaluatorListener = new EvaluatorListener() {
+        @Override
+        public void onResult(EvaluatorResult result, boolean isLast) {
+            Log.d("LM", "evaluator result :" + isLast);
+            if (isLast) {
+                StringBuilder builder = new StringBuilder();
+                builder.append(result.getResultString());
+                String xml = builder.toString();
+                Log.d("LM", "转码开始");
+                Base64 base64 = new Base64();
+                try {
+                    result_xmlBase64 = base64.encodeToString(xml.getBytes("UTF-8"));
+                    Log.d("LM", "转码完成");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onError(SpeechError error) {
+            if(error != null) {
+                Toast.makeText(mContext, "error:"+ error.getErrorCode() + "," + error.getErrorDescription(), Toast.LENGTH_LONG).show();
+            } else {
+                Log.d("LM", "evaluator over");
+            }
+        }
+
+        @Override
+        public void onBeginOfSpeech() {
+            // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
+            Log.d("LM", "evaluator begin");
+        }
+
+        @Override
+        public void onEndOfSpeech() {
+            // 此回调表示：检测到了语音的尾端点，已经进入识别过程，不再接受语音输入
+            Log.d("LM", "evaluator stoped");
+        }
+
+        @Override
+        public void onVolumeChanged(int volume, byte[] data) {
+            Log.d("LM", "返回音频数据："+ data.length + "当前音量：" + volume);
+        }
+
+        @Override
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+            // 以下代码用于获取与云端的会话id，当业务出错时将会话id提供给技术支持人员，可用于查询会话日志，定位出错原因
+            //	if (SpeechEvent.EVENT_SESSION_ID == eventType) {
+            //		String sid = obj.getString(SpeechEvent.KEY_EVENT_SESSION_ID);
+            //		Log.d(TAG, "session id =" + sid);
+            //	}
+        }
+    };
 }
