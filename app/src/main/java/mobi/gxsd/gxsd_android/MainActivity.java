@@ -88,6 +88,7 @@ import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.victor.loading.rotate.RotateLoading;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -194,13 +195,16 @@ public class MainActivity extends FragmentActivity implements
     // 评测对象
     private SpeechEvaluator mIse;
     private boolean is_begin;
-    private String result_xmlBase64;
+    private String xml = "";
+
+    private RotateLoading rotateLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        rotateLoading = (RotateLoading) findViewById(R.id.rotateloading);
         // 配合启动图，遮挡住自动登录的过程
         laumch_Layout = (LinearLayout)findViewById(R.id.launch_image);
         laumch_Layout.setBackgroundResource(R.drawable.launch_image);
@@ -243,8 +247,6 @@ public class MainActivity extends FragmentActivity implements
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
-        getPersimmions();
 
         unZipOutPath = "/data/data/" + getPackageName() + "/upzip/";
 
@@ -608,24 +610,6 @@ public class MainActivity extends FragmentActivity implements
                     new Thread() {
                         public void run() {
 
-                        }
-                    }.start();
-                }else {
-
-                    new Thread() {
-                        public void run() {
-                            try {
-                                sleep(10000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    initPermission();
-                                }
-                            });
                         }
                     }.start();
                 }
@@ -1528,7 +1512,6 @@ public class MainActivity extends FragmentActivity implements
 
         @JavascriptInterface
         public void callandroid_ise(String exceName, String txt) {
-            Log.d("LM", "录音");
             if (exceName.equals("录音")) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -1537,8 +1520,10 @@ public class MainActivity extends FragmentActivity implements
                     }
                 });
             } else if (exceName.equals("请求评测结果")) {
+                Log.d("LM", "提交成绩");
                 uploadMp3();
             } else if (exceName.equals("销毁录音")) {
+                Log.d("LM", "销毁录音");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1910,6 +1895,7 @@ public class MainActivity extends FragmentActivity implements
         is_begin = !is_begin;
         if (is_begin) {
             Log.d("LM", "开始录制");
+            xml = "";
             startEva(text);
             String url = "javascript:LM_AndroidIOSToVue_startRecord()";
             MainActivity.mWebView.loadUrl(url);
@@ -1927,6 +1913,41 @@ public class MainActivity extends FragmentActivity implements
     }
 
     public void uploadMp3() {
+        if(xml.equals("")){
+            Toast.makeText(mContext, "音频处理中，请稍候...", Toast.LENGTH_LONG).show();
+            Log.d("LM", "音频处理中，请稍候...");
+            return;
+        }
+        new Thread() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        rotateLoading.start();
+                        Toast.makeText(mContext, "音频解析中，请稍候...", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }.start();
+        Base64 base64 = new Base64();
+        String result_xmlBase64 = "";
+        try {
+            Log.d("LM", "转码开始");
+            result_xmlBase64 = base64.encodeToString(xml.getBytes("UTF-8"));
+            Log.d("LM", "转码完成");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        new Thread() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mContext, "开始提交，请稍候...", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }.start();
         Log.d("LM", "上传音频文件");
         String BOUNDARY = UUID.randomUUID().toString();  //边界标识   随机生成
         String PREFIX = "--", LINE_END = "\r\n";
@@ -1984,10 +2005,11 @@ public class MainActivity extends FragmentActivity implements
                     }
                     Log.e("LM", "result : " + result);
                     String mp3Url = jsonObj.get("data").toString();
+                    String finalResult_xmlBase6 = result_xmlBase64;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            String url_to_vue = "javascript:LM_AndroidIOSToVue_read_gsw_xml_result('" + result_xmlBase64 + "','" + mp3Url + "')";
+                            String url_to_vue = "javascript:LM_AndroidIOSToVue_read_gsw_xml_result('" + finalResult_xmlBase6 + "','" + mp3Url + "')";
                             MainActivity.mWebView.loadUrl(url_to_vue);
                         }
                     });
@@ -1997,6 +2019,17 @@ public class MainActivity extends FragmentActivity implements
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            new Thread() {
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            rotateLoading.stop();
+                        }
+                    });
+                }
+            }.start();
         }
     }
 
@@ -2047,19 +2080,11 @@ public class MainActivity extends FragmentActivity implements
     private EvaluatorListener mEvaluatorListener = new EvaluatorListener() {
         @Override
         public void onResult(EvaluatorResult result, boolean isLast) {
-            Log.d("LM", "evaluator result :" + isLast);
+            Log.d("LM", "评测音频采集结束:" + isLast);
             if (isLast) {
                 StringBuilder builder = new StringBuilder();
                 builder.append(result.getResultString());
-                String xml = builder.toString();
-                Log.d("LM", "转码开始");
-                Base64 base64 = new Base64();
-                try {
-                    result_xmlBase64 = base64.encodeToString(xml.getBytes("UTF-8"));
-                    Log.d("LM", "转码完成");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                xml = builder.toString();
             }
         }
 
