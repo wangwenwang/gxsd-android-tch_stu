@@ -188,6 +188,11 @@
 
         <activity android:name="mobi.gxsd.gxsd_android_teacher.wxapi.WXEntryActivity" android:exported="true" />
 
+        <!--ShareTrace-->
+        <meta-data
+            android:name="com.sharetrace.APP_KEY"
+            android:value="88e7bea3c760a53b"/>
+
     </application>
 
 </manifest>

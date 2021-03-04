@@ -64,6 +64,9 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baoyz.actionsheet.ActionSheet;
 
 import changed.org.apache.commons.codec.binary.Base64;
+import cn.net.shoot.sharetracesdk.AppData;
+import cn.net.shoot.sharetracesdk.ShareTrace;
+import cn.net.shoot.sharetracesdk.ShareTraceInstallListener;
 import mobi.gxsd.gxsd_android.CheckVersionLib.BaseDialog;
 import mobi.gxsd.gxsd_android.Tools.AnimationUtils;
 import mobi.gxsd.gxsd_android.Tools.Constants;
@@ -526,6 +529,18 @@ public class MainActivity extends FragmentActivity implements
         // 注册微信登录
         registToWX();
         SpeechUtility.createUtility(MainActivity.this, "appid=5f9a1b08");
+
+        // 获取推荐人账号
+        ShareTrace.getInstallTrace(new ShareTraceInstallListener() {
+            @Override
+            public void onInstall(AppData data) {
+                Toast.makeText(mContext, data.toString(), LENGTH_LONG).show();
+            }
+            @Override
+            public void onError(int code, String msg) {
+                Toast.makeText(mContext, "Get install trace info error. code=" + code + ",msg=" + msg, LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
