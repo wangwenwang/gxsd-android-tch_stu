@@ -186,12 +186,6 @@
             android:launchMode="standard"
             android:screenOrientation="portrait"/>
 
-        <!--查看路线-->
-        <activity
-            android:name="mobi.gxsd.gxsd_android.track.OrderTrackActivity"
-            android:launchMode="standard"
-            android:screenOrientation="portrait"/>
-
         <activity android:name="mobi.gxsd.gxsd_android_teacher.wxapi.WXEntryActivity" android:exported="true" />
 
     </application>

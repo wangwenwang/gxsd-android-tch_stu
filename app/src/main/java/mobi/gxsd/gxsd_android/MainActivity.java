@@ -73,7 +73,6 @@ import mobi.gxsd.gxsd_android.Tools.MPermissionsUtil;
 import mobi.gxsd.gxsd_android.Tools.SystemUtil;
 import mobi.gxsd.gxsd_android.Tools.Tools;
 import mobi.gxsd.gxsd_android.print.PrintActivity;
-import mobi.gxsd.gxsd_android.track.OrderTrackActivity;
 
 import com.iflytek.cloud.EvaluatorListener;
 import com.iflytek.cloud.EvaluatorResult;
@@ -1438,27 +1437,6 @@ public class MainActivity extends FragmentActivity implements
 
                                     Toast.makeText(mContext, "未检索到本机已安装‘百度地图’或‘高德地图’App", LENGTH_LONG).show();
                                 }
-                            }
-                        });
-                    }
-                }.start();
-            }
-
-            else if (exceName.equals("查看路线")) {
-
-                new Thread() {
-
-                    public void run() {
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                Intent intent2 = new Intent(MainActivity.mContext, OrderTrackActivity.class);
-                                intent2.putExtra("order_IDX", lng1);
-                                intent2.putExtra("shipment_Code", lat1);
-                                intent2.putExtra("shipment_Status", address1);
-                                mContext.startActivity(intent2);
                             }
                         });
                     }
