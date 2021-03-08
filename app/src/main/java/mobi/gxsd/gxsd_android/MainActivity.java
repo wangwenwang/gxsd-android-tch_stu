@@ -114,7 +114,9 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static android.widget.Toast.LENGTH_LONG;
@@ -529,18 +531,6 @@ public class MainActivity extends FragmentActivity implements
         // 注册微信登录
         registToWX();
         SpeechUtility.createUtility(MainActivity.this, "appid=5f9a1b08");
-
-        // 获取推荐人账号
-        ShareTrace.getInstallTrace(new ShareTraceInstallListener() {
-            @Override
-            public void onInstall(AppData data) {
-                Toast.makeText(mContext, data.toString(), LENGTH_LONG).show();
-            }
-            @Override
-            public void onError(int code, String msg) {
-                Toast.makeText(mContext, "Get install trace info error. code=" + code + ",msg=" + msg, LENGTH_LONG).show();
-            }
-        });
     }
 
     @Override
@@ -1525,6 +1515,56 @@ public class MainActivity extends FragmentActivity implements
                     }
                 });
             }
+        }
+
+        // 获取推荐人账号
+        @JavascriptInterface
+        public void receiveRecommend() {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    ShareTrace.getInstallTrace(new ShareTraceInstallListener() {
+                        @Override
+                        public void onInstall(AppData data) {
+                            if(data.getParamsData() != null){
+
+                                String query = data.getParamsData();
+                                Map query_pairs = new HashMap<String, String>();
+                                if(query.length()>0) {
+                                    final String[] pairs = query.split("&");
+                                    for (String pair : pairs) {
+                                        final int idx = pair.indexOf("=");
+                                        //如果等号存在且不在字符串两端，取出key、value
+                                        if (idx > 0 && idx < pair.length() - 1) {
+                                            String key = null;
+                                            try {
+                                                key = URLDecoder.decode(pair.substring(0, idx), "UTF-8");
+                                            } catch (UnsupportedEncodingException e) {
+                                                e.printStackTrace();
+                                            }
+                                            String value = null;
+                                            try {
+                                                value = URLDecoder.decode(pair.substring(idx + 1), "UTF-8");
+                                            } catch (UnsupportedEncodingException e) {
+                                                e.printStackTrace();
+                                            }
+                                            query_pairs.put(key, value);
+                                        }
+                                    }
+                                }
+                                String url = "javascript:LM_AndroidIOSToVue_Recommend('" + (String) query_pairs.get("channel") + "','" + (String) query_pairs.get("tel") + "')";
+                                MainActivity.mWebView.loadUrl(url);
+                            }
+                        }
+                        @Override
+                        public void onError(int code, String msg) {
+                            Toast.makeText(mContext, "Get install trace info error. code=" + code + ",msg=" + msg, LENGTH_LONG).show();
+                        }
+                    });
+                }
+            });
         }
     }
 
