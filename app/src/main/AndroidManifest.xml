@@ -134,14 +134,14 @@
         </service>
 
 <!--        学生student-->
-<!--        <meta-data-->
-<!--            android:name="com.amap.api.v2.apikey"-->
-<!--            android:value="ddc7b489d5e94bff1db905fc7077f20f"/>-->
-
-<!--        老师teacher-->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="8cecd1578db77e4fd90081acb9fce0a7"/>
+            android:value="ddc7b489d5e94bff1db905fc7077f20f"/>
+
+<!--        老师teacher-->
+<!--        <meta-data-->
+<!--            android:name="com.amap.api.v2.apikey"-->
+<!--            android:value="8cecd1578db77e4fd90081acb9fce0a7"/>-->
 
 
 
@@ -185,12 +185,17 @@
             android:launchMode="standard"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="mobi.gxsd.gxsd_android_teacher.wxapi.WXEntryActivity" android:exported="true" />
+        <activity android:name="mobi.gxsd.gxsd_android_student.wxapi.WXEntryActivity" android:exported="true" />
 
         <!--ShareTrace-->
+        <!--老师端-->
+<!--        <meta-data-->
+<!--            android:name="com.sharetrace.APP_KEY"-->
+<!--            android:value="88e7bea3c760a53b"/>-->
+        <!--学生端-->
         <meta-data
             android:name="com.sharetrace.APP_KEY"
-            android:value="88e7bea3c760a53b"/>
+            android:value="9c474737756d117f"/>
 
     </application>
 
