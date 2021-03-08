@@ -166,7 +166,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
         String params = "{\"wxOpenid\":\"" + openid + "\",\"APPLOGIN\":\"T\"}";
         String paramsEncoding = URLEncoder.encode(params);
-        String Strurl = "https://www.gxsd.mobi/gxsd-test/read/readUser/login?openId=" + openid + "&accountType=2";
+        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/readUser/login?openId=" + openid + "&accountType=2";
         Log.d("LM", "登录链接: " + Strurl);
 
         HttpURLConnection conn=null;

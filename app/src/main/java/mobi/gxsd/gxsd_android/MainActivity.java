@@ -1593,8 +1593,8 @@ public class MainActivity extends FragmentActivity implements
         this.WhoCheckVersion = who;
 
         Log.d("LM", "检查apk及zip版本");
-//        String Strurl = "https://www.gxsd.mobi/gxsd-test/read/task/getAppUpdateByAppType?appType=studentAndroid";
-        String Strurl = "https://www.gxsd.mobi/gxsd-test/read/task/getAppUpdateByAppType?appType=teacherAndroid";
+//        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=studentAndroid";
+        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=teacherAndroid";
 
         HttpURLConnection conn=null;
         try {
@@ -1946,7 +1946,7 @@ public class MainActivity extends FragmentActivity implements
         String PREFIX = "--", LINE_END = "\r\n";
         String CONTENT_TYPE = "multipart/form-data";   //内容类型
         try {
-            URL url = new URL("https://www.gxsd.mobi/gxsd-test/system/upload");
+            URL url = new URL("https://www.gxsd.mobi/gxsd-prod/system/upload");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(20 * 1000);
             conn.setConnectTimeout(20 * 1000);
