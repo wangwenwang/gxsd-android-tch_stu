@@ -152,15 +152,15 @@
         <!-- AK鉴权 -->
         <!-- meta-data需要写在application中 -->
 <!--        学生student-->
-<!--        <meta-data-->
-<!--            android:name="com.baidu.lbsapi.API_KEY"-->
-<!--            android:value="E647YIYq4rckW8HU6esluLor9EKGKdP7" />-->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="E647YIYq4rckW8HU6esluLor9EKGKdP7" />
 
 
 <!--        老师teacher-->
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="Ew9xvxWokoz2iTuFqblFW0XxqABla2Eg" />
+<!--        <meta-data-->
+<!--            android:name="com.baidu.lbsapi.API_KEY"-->
+<!--            android:value="Ew9xvxWokoz2iTuFqblFW0XxqABla2Eg" />-->
 
 
         <activity
