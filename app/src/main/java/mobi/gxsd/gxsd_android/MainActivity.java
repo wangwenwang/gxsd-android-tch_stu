@@ -88,6 +88,7 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.victor.loading.rotate.RotateLoading;
@@ -528,8 +529,6 @@ public class MainActivity extends FragmentActivity implements
 
         initPermission();
 
-        // 注册微信登录
-        registToWX();
         SpeechUtility.createUtility(MainActivity.this, "appid=5f9a1b08");
     }
 
@@ -1131,6 +1130,9 @@ public class MainActivity extends FragmentActivity implements
 
                 Log.d("LM", "微信登录");
 
+                // 注册
+                registToWX();
+
                 new Thread() {
                     public void run() {
 
@@ -1576,6 +1578,36 @@ public class MainActivity extends FragmentActivity implements
                     });
                 }
             });
+        }
+
+
+        @JavascriptInterface
+        public void callandroid_pay(String partnerId, String prepayId, String nonceStr, String timeStamp, String _package, String sign) {
+
+            Log.d("LM", "callandroid_pay: ");
+            // 商户号appid
+            mWxApi = WXAPIFactory.createWXAPI(mContext, null);
+            mWxApi.registerApp("wxf4c0b12e47ec4cf9");
+            new Thread() {
+                public void run() {
+
+                    if (!mWxApi.isWXAppInstalled()) {
+                        Log.d("LM", "您还未安装微信客户端");
+                        return;
+                    } else {
+                        Log.d("LM", "微信客户端已安装");
+                    }
+                    PayReq req = new PayReq();
+                    req.appId = "wxf4c0b12e47ec4cf9";
+                    req.partnerId = partnerId;
+                    req.prepayId = prepayId;
+                    req.nonceStr = nonceStr;
+                    req.timeStamp = timeStamp;
+                    req.packageValue = _package;
+                    req.sign = sign;
+                    mWxApi.sendReq(req);
+                }
+            }.start();
         }
     }
 

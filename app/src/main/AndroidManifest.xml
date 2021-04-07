@@ -186,6 +186,7 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name="mobi.gxsd.gxsd_android_student.wxapi.WXEntryActivity" android:exported="true" />
+        <activity android:name="mobi.gxsd.gxsd_android_student.wxapi.WXPayEntryActivity" android:exported="true" android:launchMode="singleTop"/>
 
         <!--ShareTrace-->
         <!--老师端-->
