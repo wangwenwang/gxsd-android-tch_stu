@@ -13,7 +13,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-import mobi.gxsd.gxsd_android.R;
+import mobi.gxsd.gxsd_android_student.R;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 	
@@ -24,7 +24,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pay_result);
         
-    	api = WXAPIFactory.createWXAPI(this, "wxf4c0b12e47ec4cf9");
+    	api = WXAPIFactory.createWXAPI(this, "wx99c047234ba1b87a");
         api.handleIntent(getIntent(), this);
     }
 
