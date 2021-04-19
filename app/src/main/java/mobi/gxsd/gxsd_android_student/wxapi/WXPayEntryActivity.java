@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
@@ -12,8 +11,8 @@ import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
+import mobi.gxsd.gxsd_android.MainActivity;
 import mobi.gxsd.gxsd_android_student.R;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
@@ -24,9 +23,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pay_result);
-        
-    	api = WXAPIFactory.createWXAPI(this, "wx99c047234ba1b87a");
-        api.handleIntent(getIntent(), this);
+        MainActivity.mWxApi.handleIntent(getIntent(), this);
     }
 
 	@Override
