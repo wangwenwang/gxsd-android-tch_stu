@@ -1568,7 +1568,7 @@ public class MainActivity extends FragmentActivity implements
         public void callandroid_pay(String partnerId, String prepayId, String nonceStr, String timeStamp, String _package, String sign, String appId) {
 
             Log.d("LM", "callandroid_pay: ");
-            // 商户号appid
+            // 微信公众平台appid
             mWxApi = WXAPIFactory.createWXAPI(mContext, null);
             mWxApi.registerApp(appId);
             new Thread() {
