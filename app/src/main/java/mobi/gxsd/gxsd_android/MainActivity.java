@@ -1570,7 +1570,7 @@ public class MainActivity extends FragmentActivity implements
             Log.d("LM", "callandroid_pay: ");
             // 商户号appid
             mWxApi = WXAPIFactory.createWXAPI(mContext, null);
-            mWxApi.registerApp("wx99c047234ba1b87a");
+            mWxApi.registerApp(appId);
             new Thread() {
                 public void run() {
 
