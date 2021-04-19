@@ -1916,8 +1916,10 @@ public class MainActivity extends FragmentActivity implements
             }
 
             String pkName = this.getPackageName();
-            // 首页
-            String Index = "file:///data/data/" + pkName + "/upzip/dist/index.html#/index";
+            // 学生端首页
+            String Index_stu = "file:///data/data/" + pkName + "/upzip/dist/index.html#/index_stu";
+            // 老师端首页
+            String Index_tch = "file:///data/data/" + pkName + "/upzip/dist/index.html#/index_tch";
             // 学生任务
             String Waybill = "file:///data/data/" + pkName + "/upzip/dist/index.html#/task_stu";
             // 老师任务
@@ -1929,7 +1931,8 @@ public class MainActivity extends FragmentActivity implements
 
             // 主菜单时不允许返回上一页
             if (
-                    curURL.indexOf(Index + "?") != -1 || curURL.equals(Index) ||
+                    curURL.indexOf(Index_stu + "?") != -1 || curURL.equals(Index_stu) ||
+                            curURL.indexOf(Index_tch + "?") != -1 || curURL.equals(Index_tch) ||
                             curURL.indexOf(Waybill + "?") != -1 || curURL.equals(Waybill) ||
                             curURL.indexOf(task_tch + "?") != -1 || curURL.equals(task_tch) ||
                             curURL.indexOf(ReportForms + "?") != -1 || curURL.equals(ReportForms) ||
