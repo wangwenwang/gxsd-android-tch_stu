@@ -75,7 +75,6 @@ import mobi.gxsd.gxsd_android.Tools.LocationApplication;
 import mobi.gxsd.gxsd_android.Tools.MPermissionsUtil;
 import mobi.gxsd.gxsd_android.Tools.SystemUtil;
 import mobi.gxsd.gxsd_android.Tools.Tools;
-import mobi.gxsd.gxsd_android.print.PrintActivity;
 
 import com.iflytek.cloud.EvaluatorListener;
 import com.iflytek.cloud.EvaluatorResult;
@@ -1196,23 +1195,6 @@ public class MainActivity extends FragmentActivity implements
 
                 Log.d("LM", "查看路线");
 
-            } else if (exceName.equals("打印")) {
-
-                new Thread() {
-
-                    public void run() {
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                Intent printIntent = new Intent(MainActivity.mContext, PrintActivity.class);
-                                printIntent.putExtra("json_print", inputName);
-                                mContext.startActivity(printIntent);
-                            }
-                        });
-                    }
-                }.start();
             }
             // 服务器地址
             else if(exceName.equals("服务器地址")) {
