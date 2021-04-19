@@ -75,6 +75,7 @@ import mobi.gxsd.gxsd_android.Tools.LocationApplication;
 import mobi.gxsd.gxsd_android.Tools.MPermissionsUtil;
 import mobi.gxsd.gxsd_android.Tools.SystemUtil;
 import mobi.gxsd.gxsd_android.Tools.Tools;
+import mobi.gxsd.gxsd_android_student.R;
 
 import com.iflytek.cloud.EvaluatorListener;
 import com.iflytek.cloud.EvaluatorResult;
@@ -1564,12 +1565,12 @@ public class MainActivity extends FragmentActivity implements
 
 
         @JavascriptInterface
-        public void callandroid_pay(String partnerId, String prepayId, String nonceStr, String timeStamp, String _package, String sign) {
+        public void callandroid_pay(String partnerId, String prepayId, String nonceStr, String timeStamp, String _package, String sign, String appId) {
 
             Log.d("LM", "callandroid_pay: ");
             // 商户号appid
             mWxApi = WXAPIFactory.createWXAPI(mContext, null);
-            mWxApi.registerApp("wxf4c0b12e47ec4cf9");
+            mWxApi.registerApp("wx99c047234ba1b87a");
             new Thread() {
                 public void run() {
 
@@ -1580,7 +1581,7 @@ public class MainActivity extends FragmentActivity implements
                         Log.d("LM", "微信客户端已安装");
                     }
                     PayReq req = new PayReq();
-                    req.appId = "wxf4c0b12e47ec4cf9";
+                    req.appId = appId;
                     req.partnerId = partnerId;
                     req.prepayId = prepayId;
                     req.nonceStr = nonceStr;
