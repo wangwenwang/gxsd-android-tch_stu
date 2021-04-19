@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
@@ -41,13 +42,21 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
 	@Override
 	public void onResp(BaseResp resp) {
-		Log.d("LM", "onPayFinish, errCode = " + resp.errCode);
-
 		if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("提示");
-			builder.setMessage("微信支付结果：" + resp.errCode);
-			builder.show();
+			if(resp.errCode == 0){
+				Toast.makeText(this, "支付成功", Toast.LENGTH_LONG).show();
+				finish();
+			}
+			else if(resp.errCode == -2){
+				Toast.makeText(this, "取消支付", Toast.LENGTH_LONG).show();
+				finish();
+			}
+			else{
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("提示");
+				builder.setMessage("微信支付结果：" + resp.errCode);
+				builder.show();
+			}
 		}
 	}
 }
