@@ -231,7 +231,7 @@ public class MainActivity extends FragmentActivity implements
 
                     PackageManager pm = getPackageManager();
                     boolean permission = (PackageManager.PERMISSION_GRANTED ==
-                            pm.checkPermission("android.permission.WRITE_EXTERNAL_STORAGE", "mobi.gxsd.gxsd_android_student"));
+                            pm.checkPermission("android.permission.WRITE_EXTERNAL_STORAGE", getPackageName()));
                     if (permission) {
                         checkVersion("原生");
                         break;
