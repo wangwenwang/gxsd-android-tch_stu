@@ -35,8 +35,8 @@ android {
         applicationId "mobi.gxsd.gxsd_android_student"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 15
-        versionName "1.1.2"
+        versionCode 17
+        versionName "1.1.3"
         testInstrumentationRunner "android.support.tete = \"wechat_sdk_tst.runner.AndroidJUnitRunner"
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
