@@ -548,6 +548,8 @@ public class MainActivity extends FragmentActivity implements
     }
 
     public void WXsharePic(String transaction, final boolean isSession, Bitmap bitmap) {
+        // 注册微信登录
+        registToWX();
         //初始化WXImageObject和WXMediaMessage对象
         WXImageObject imageObject = new WXImageObject(bitmap);
         WXMediaMessage msg = new WXMediaMessage();
