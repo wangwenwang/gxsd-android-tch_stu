@@ -201,6 +201,7 @@ public class MainActivity extends FragmentActivity implements
     private SpeechEvaluator mIse;
     private boolean is_begin;
     private String xml = "";
+    private String appNav = null;
 
     private RotateLoading rotateLoading;
 
@@ -213,6 +214,8 @@ public class MainActivity extends FragmentActivity implements
         // 配合启动图，遮挡住自动登录的过程
         laumch_Layout = (LinearLayout)findViewById(R.id.launch_image);
         laumch_Layout.setBackgroundResource(R.drawable.launch_image);
+
+        appNav = this.getIntent().getStringExtra("appNav");
 
         // 修复targetSdkVersion为28时，拍照闪退问题
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
