@@ -1513,6 +1513,8 @@ public class MainActivity extends FragmentActivity implements
                     public void run() {
                         stopEva();
                         is_begin = false;
+                        String url = "javascript:LM_AndroidIOSToVue_stopRecord('stop')";
+                        MainActivity.mWebView.loadUrl(url);
                     }
                 });
             }
@@ -1969,7 +1971,7 @@ public class MainActivity extends FragmentActivity implements
         } else {
             Log.d("LM", "结束录制");
             stopEva();
-            String url = "javascript:LM_AndroidIOSToVue_stopRecord()";
+            String url = "javascript:LM_AndroidIOSToVue_stopRecord('complete')";
             MainActivity.mWebView.loadUrl(url);
         }
     }
@@ -2179,6 +2181,8 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onVolumeChanged(int volume, byte[] data) {
             Log.d("LM", "返回音频数据："+ data.length + "当前音量：" + volume);
+            String url = "javascript:LM_AndroidIOSToVue_recordVolume('" + volume + "')";
+            MainActivity.mWebView.loadUrl(url);
         }
 
         @Override
