@@ -17,6 +17,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -204,6 +206,8 @@ public class MainActivity extends FragmentActivity implements
     private String appNav = null;
 
     private RotateLoading rotateLoading;
+
+    MediaPlayer mMediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1517,6 +1521,30 @@ public class MainActivity extends FragmentActivity implements
                         MainActivity.mWebView.loadUrl(url);
                     }
                 });
+            }else if (exceName.equals("播放范读")) {
+                mMediaPlayer = new MediaPlayer();
+                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                try {
+                    mMediaPlayer.setDataSource(txt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mMediaPlayer.prepareAsync();
+                mMediaPlayer.start();
+                mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        mp.start();
+                    }
+                });
+                mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                    @Override
+                    public boolean onError(MediaPlayer mp, int what, int extra) {
+                        return false;
+                    }
+                });
+            } else if (exceName.equals("停止范读")) {
+                mMediaPlayer.stop();
             }
         }
 
