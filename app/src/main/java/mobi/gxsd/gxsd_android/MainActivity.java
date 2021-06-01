@@ -176,7 +176,7 @@ public class MainActivity extends FragmentActivity implements
     private Uri mImageUri;
     private static final String FILE_PROVIDER_AUTHORITY = "mobi.gxsd.gxsd_android.fileprovider";
 
-    private String CURR_ZIP_VERSION = "1.6.7";
+    private String CURR_ZIP_VERSION = "1.9.7";
     private String WhoCheckVersion;
 
     //检测版本更新
@@ -534,7 +534,7 @@ public class MainActivity extends FragmentActivity implements
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         mWebView.setDrawingCacheEnabled(true);
 
-        initPermission();
+        initPermission("存储");
 
         SpeechUtility.createUtility(MainActivity.this, "appid=5f9a1b08");
     }
@@ -605,20 +605,43 @@ public class MainActivity extends FragmentActivity implements
         mWxApi.registerApp(APP_ID);
     }
 
-    private void initPermission() {
+    private void initPermission(String permissionName) {
 
         Log.d("LM", "申请存储权限");
 
         try {
 
             if (Build.VERSION.SDK_INT >= 23) {
-                if (MPermissionsUtil.checkAndRequestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.LOCATION_HARDWARE,Manifest.permission.WRITE_SETTINGS,
-                                Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.RECORD_AUDIO}
-                        , RequestPermission_STATUS_CODE0)) {
+                String[] permissList = null;
+                if (permissionName.equals("存储")) {
+                    permissList = new String[]{
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_SETTINGS};
+                }
+                else if(permissionName.equals("位置")){
+                    permissList = new String[]{
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.LOCATION_HARDWARE};
+                }
+                else if(permissionName.equals("麦克风")){
+                    permissList = new String[]{
+                            Manifest.permission.RECORD_AUDIO};
+                }
+                else if(permissionName.equals("摄像头")){
+                    permissList = new String[]{
+                            Manifest.permission.CAMERA};
+                }
+                else{
+                    permissList = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.LOCATION_HARDWARE, Manifest.permission.WRITE_SETTINGS,
+                            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
+                }
+                if (MPermissionsUtil.checkAndRequestPermissions(MainActivity.this, permissList, RequestPermission_STATUS_CODE0)) {
 
+                    Log.d("LM", "initPermission: ");
                     new Thread() {
                         public void run() {
 
@@ -648,7 +671,7 @@ public class MainActivity extends FragmentActivity implements
             }
         } catch (Exception e) {
 
-            Log.d("LM", "initPermission: " + e.getMessage());
+            Log.d("LM", "initPermissi: " + e.getMessage());
         }
     }
 
@@ -666,7 +689,28 @@ public class MainActivity extends FragmentActivity implements
         builder.setNegativeButton("拍照", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                takeCamera();
+                initPermission("摄像头");
+                new Thread() {
+                    public void run() {
+                        // 等待用户赋予存储权限
+                        for (int i = 0; i < 99; i++) {
+                            PackageManager pm = getPackageManager();
+                            boolean permission = (PackageManager.PERMISSION_GRANTED ==
+                                    pm.checkPermission("android.permission.CAMERA", getPackageName()));
+                            if (permission) {
+                                takeCamera();
+                                break;
+                            } else {
+                                Log.d("LM", "缺少摄像头权限，等待1秒...");
+                            }
+                            try {
+                                sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }.start();
             }
         });
         builder.setCancelable(false);
@@ -1501,12 +1545,34 @@ public class MainActivity extends FragmentActivity implements
         @JavascriptInterface
         public void callandroid_ise(String exceName, String txt) {
             if (exceName.equals("录音")) {
-                runOnUiThread(new Runnable() {
-                    @Override
+                initPermission("麦克风");
+                new Thread() {
                     public void run() {
-                        read_click(txt);
+
+                        // 等待用户赋予存储权限
+                        for (int i = 0; i < 99; i++) {
+
+                            PackageManager pm = mContext.getPackageManager();
+                            boolean permission = (PackageManager.PERMISSION_GRANTED == pm.checkPermission("android.permission.RECORD_AUDIO", mContext.getPackageName()));
+                            if (permission) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        read_click(txt);
+                                    }
+                                });
+                                break;
+                            } else {
+                                Log.d("LM", "缺少麦克风权限，等待1秒...");
+                            }
+                            try {
+                                sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                });
+                }.start();
             } else if (exceName.equals("请求评测结果")) {
                 Log.d("LM", "提交成绩");
                 uploadMp3();
