@@ -1596,10 +1596,12 @@ public class MainActivity extends FragmentActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        stopEva();
-                        is_begin = false;
-                        String url = "javascript:LM_AndroidIOSToVue_stopRecord('stop')";
-                        MainActivity.mWebView.loadUrl(url);
+                        if(is_begin){
+                            stopEva();
+                            is_begin = false;
+                            String url = "javascript:LM_AndroidIOSToVue_stopRecord('stop')";
+                            MainActivity.mWebView.loadUrl(url);
+                        }
                     }
                 });
             }else if (exceName.equals("播放范读")) {
