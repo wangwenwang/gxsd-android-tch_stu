@@ -1373,6 +1373,17 @@ public class MainActivity extends FragmentActivity implements
                         WXsharePic("fd", true, takeScreenShot(MainActivity.this));
                     }
                 });
+            }
+            // 分享图片-朋友圈
+            else if(exceName.equals("分享图片-朋友圈")) {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        WXsharePic("fd", true, takeScreenShot(MainActivity.this));
+                    }
+                });
             } else if (exceName.equals("邀请加入班级")) {
 
                 runOnUiThread(new Runnable() {
