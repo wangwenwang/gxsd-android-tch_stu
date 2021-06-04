@@ -1429,6 +1429,17 @@ public class MainActivity extends FragmentActivity implements
         }
 
         @JavascriptInterface
+        public String getWXAppInstalled() {
+            // 注册
+            registToWX();
+            if (mWxApi.isWXAppInstalled()) {
+                return "yes";
+            } else {
+                return "no";
+            }
+        }
+
+            @JavascriptInterface
         public void callAndroid(String exceName, String u, String p) {
 
             Log.d("LM", "执行:" + exceName + "    " + "SetCurrAddressSetCurrAddress名:" + u + "    " + "密码:" + p);
