@@ -24,7 +24,8 @@ android {
     defaultConfig {
         // 学生端
         // 包名：mobi.gxsd.gxsd_android_student
-        // GenSignature：21cde1b21f7cacb69a66b3ca0461db25
+        // 微信签名：21cde1b21f7cacb69a66b3ca0461db25
+        // Oppo签名：720c501d42c216eac1dbe4acaadb0a8c
         // AppID: wxdce29e3a76e0c723
         // AppSecret: 65bdac5dee3677bb8150b22a87abece7
         // 老师端
