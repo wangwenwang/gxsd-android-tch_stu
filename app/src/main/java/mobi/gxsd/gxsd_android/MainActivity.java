@@ -176,7 +176,7 @@ public class MainActivity extends FragmentActivity implements
     private Uri mImageUri;
     private static final String FILE_PROVIDER_AUTHORITY = "mobi.gxsd.gxsd_android.fileprovider";
 
-    private String CURR_ZIP_VERSION = "1.7.3";
+    private String CURR_ZIP_VERSION = "1.8.5";
     private String WhoCheckVersion;
 
     //检测版本更新
@@ -1788,8 +1788,8 @@ public class MainActivity extends FragmentActivity implements
         this.WhoCheckVersion = who;
 
         Log.d("LM", "检查apk及zip版本");
-//        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=studentAndroid";
-        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=teacherAndroid";
+        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=studentAndroid";
+//        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=teacherAndroid";
 
         HttpURLConnection conn=null;
         try {
