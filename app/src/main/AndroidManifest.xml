@@ -31,79 +31,36 @@
 
 
     <!-- 以下不是定位SDK需要的基础权限，仅用于Demo演示 -->
-    <uses-permission android:name="android.permission.READ_LOGS" >
-    </uses-permission>
     <uses-permission android:name="android.permission.VIBRATE" >
     </uses-permission>
-    <uses-permission android:name="android.permission.WAKE_LOCK" >
-    </uses-permission>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" >
-    </uses-permission>
-
-
+<!--    <uses-permission android:name="android.permission.WAKE_LOCK" >-->
+<!--    </uses-permission>-->
+<!--    <uses-permission android:name="android.permission.WRITE_SETTINGS" >-->
+<!--    </uses-permission>-->
 
 
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FIND_LOCATION" />
-    <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+<!--    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />-->
     <!-- 允许应用读取低级别的系统日志文件 -->
-    <uses-permission android:name="android.permission.READ_LOGS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
-    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
-    <!--<uses-permission android:name="android.permission.RESTART_PACKAGES" />-->
+<!--    <uses-permission android:name="android.permission.READ_LOGS" />-->
+<!--    <uses-permission android:name="android.permission.USE_CREDENTIALS" />-->
+<!--    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />-->
+<!--    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />-->
+<!--    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />-->
+<!--    <uses-permission android:name="android.permission.BROADCAST_STICKY" />-->
     <!--百度地图导航权限注册-->
-    <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCES_MOCK_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <!-- SDK1.5需要android.permission.GET_TASKS权限判断本程序是否为当前运行的应用? -->
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+<!--    <uses-permission android:name="android.permission.GET_TASKS" />-->
     <!--android 23 用于忽略电池优化-->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+<!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>-->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- 摄像机-->
     <uses-permission android:name="android.permission.CAMERA" />
-
-    <!-- 打印 -->
-    <uses-feature android:required="true" android:name="android.hardware.usb.host" />
-    <uses-permission android:name="android.hardware.usb.UsbAccessory" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.READ_LOGS"/>
 
 
     <application
@@ -119,16 +76,16 @@
 
 
         <!-- 声明service组件 -->
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote" >
-        </service>
+<!--        <service-->
+<!--            android:name="com.baidu.location.f"-->
+<!--            android:enabled="true"-->
+<!--            android:process=":remote" >-->
+<!--        </service>-->
 
 <!--        学生student-->
-        <meta-data
-            android:name="com.amap.api.v2.apikey"
-            android:value="ddc7b489d5e94bff1db905fc7077f20f"/>
+<!--        <meta-data-->
+<!--            android:name="com.amap.api.v2.apikey"-->
+<!--            android:value="ddc7b489d5e94bff1db905fc7077f20f"/>-->
 
 <!--        老师teacher-->
 <!--        <meta-data-->
@@ -136,17 +93,12 @@
 <!--            android:value="8cecd1578db77e4fd90081acb9fce0a7"/>-->
 
 
-
-
-        <service android:name="net.posprinter.service.PosprinterService" />
-
-
         <!-- AK鉴权 -->
         <!-- meta-data需要写在application中 -->
 <!--        学生student-->
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="E647YIYq4rckW8HU6esluLor9EKGKdP7" />
+<!--        <meta-data-->
+<!--            android:name="com.baidu.lbsapi.API_KEY"-->
+<!--            android:value="E647YIYq4rckW8HU6esluLor9EKGKdP7" />-->
 
 
 <!--        老师teacher-->
