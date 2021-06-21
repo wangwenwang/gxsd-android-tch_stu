@@ -45,7 +45,6 @@ public class LocationApplication extends Application {
          */
         locationService = new LocationService(getApplicationContext());
         mVibrator =(Vibrator)getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
-        SDKInitializer.initialize(getApplicationContext());
 
         // 初始化ShareTrace
         ShareTrace.init(this);
