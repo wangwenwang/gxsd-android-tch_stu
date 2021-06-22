@@ -1221,6 +1221,18 @@ public class MainActivity extends FragmentActivity implements
                     }
                 });
 
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", MODE_MULTI_PROCESS);
+                        String user_info = p.getString("user_habbit", "");
+                        String url = "javascript:LM_AndroidIOSToVue_userHabbit('" + user_info + "')";
+                        MainActivity.mWebView.loadUrl(url);
+                        Log.i("LM", "发送 | 用户习惯");
+                    }
+                });
+
 
 
             } else if (exceName.equals("获取当前位置页面已加载")) {
@@ -1297,6 +1309,14 @@ public class MainActivity extends FragmentActivity implements
                 SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", Context.MODE_MULTI_PROCESS);
                 p.edit().putString("user_info", inputName).commit();
                 Log.i("LM","接收 | 用户信息");
+            }
+            // 存储用户习惯
+            else if(exceName.equals("用户习惯")) {
+
+                // 接收用户习惯
+                SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", Context.MODE_MULTI_PROCESS);
+                p.edit().putString("user_habbit", inputName).commit();
+                Log.i("LM","接收 | 用户习惯");
             }
             // 存储文章阅读时长
             else if(exceName.equals("文章阅读时长")) {
