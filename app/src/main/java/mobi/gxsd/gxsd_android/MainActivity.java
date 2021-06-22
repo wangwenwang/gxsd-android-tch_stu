@@ -1700,6 +1700,17 @@ public class MainActivity extends FragmentActivity implements
                 }
             }.start();
         }
+
+        // 退出App
+        @JavascriptInterface
+        public void exitApp() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            });
+        }
     }
 
 
