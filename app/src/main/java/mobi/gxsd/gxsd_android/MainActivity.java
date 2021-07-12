@@ -197,6 +197,8 @@ public class MainActivity extends FragmentActivity implements
 
     // 启动图
     LinearLayout laumch_Layout;
+    // load背景，不可点击
+    LinearLayout loadingBgView;
 
     // 评测对象
     private SpeechEvaluator mIse;
@@ -219,6 +221,8 @@ public class MainActivity extends FragmentActivity implements
         // 配合启动图，遮挡住自动登录的过程
         laumch_Layout = (LinearLayout)findViewById(R.id.launch_image);
         laumch_Layout.setBackgroundResource(R.drawable.launch_image);
+        loadingBgView = (LinearLayout)findViewById(R.id.loadingBgView);
+        loadingBgView.setAlpha(0.2f);
 
         appNav = this.getIntent().getStringExtra("appNav");
 
@@ -2102,6 +2106,7 @@ public class MainActivity extends FragmentActivity implements
             MainActivity.mWebView.loadUrl(url);
         } else {
             Log.d("LM", "结束录制");
+            loadingBgView.setVisibility(View.VISIBLE);
             rotateLoading.start();
             stopEva();
             String url = "javascript:LM_AndroidIOSToVue_stopRecord('complete')";
@@ -2125,6 +2130,7 @@ public class MainActivity extends FragmentActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        loadingBgView.setVisibility(View.VISIBLE);
                         rotateLoading.start();
                         Toast.makeText(mContext, "音频解析中，请稍候...", Toast.LENGTH_LONG).show();
                     }
@@ -2227,6 +2233,7 @@ public class MainActivity extends FragmentActivity implements
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            loadingBgView.setVisibility(View.INVISIBLE);
                             rotateLoading.stop();
                         }
                     });
@@ -2283,6 +2290,7 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onResult(EvaluatorResult result, boolean isLast) {
             Log.d("LM", "评测音频采集结束:" + isLast);
+            loadingBgView.setVisibility(View.INVISIBLE);
             rotateLoading.stop();
             if (isLast) {
                 StringBuilder builder = new StringBuilder();
