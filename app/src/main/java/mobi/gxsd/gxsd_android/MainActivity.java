@@ -2102,6 +2102,7 @@ public class MainActivity extends FragmentActivity implements
             MainActivity.mWebView.loadUrl(url);
         } else {
             Log.d("LM", "结束录制");
+            rotateLoading.start();
             stopEva();
             String url = "javascript:LM_AndroidIOSToVue_stopRecord('complete')";
             MainActivity.mWebView.loadUrl(url);
@@ -2282,6 +2283,7 @@ public class MainActivity extends FragmentActivity implements
         @Override
         public void onResult(EvaluatorResult result, boolean isLast) {
             Log.d("LM", "评测音频采集结束:" + isLast);
+            rotateLoading.stop();
             if (isLast) {
                 StringBuilder builder = new StringBuilder();
                 builder.append(result.getResultString());
