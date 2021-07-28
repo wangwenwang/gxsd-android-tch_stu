@@ -9,6 +9,7 @@ import android.app.Service;
 import android.content.Context;
 import android.os.Vibrator;
 
+import cn.jiguang.verifysdk.api.JVerificationInterface;
 import cn.net.shoot.sharetracesdk.ShareTrace;
 
 /**
@@ -48,6 +49,8 @@ public class LocationApplication extends Application {
 
         // 初始化ShareTrace
         ShareTrace.init(this);
+        JVerificationInterface.init(this);
+        JVerificationInterface.setDebugMode(true);
 
     }
 

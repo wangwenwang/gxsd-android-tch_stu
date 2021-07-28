@@ -42,6 +42,11 @@ android {
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
         }
+        manifestPlaceholders = [
+                JPUSH_PKGNAME: "mobi.gxsd.gxsd_android_student",
+                JPUSH_APPKEY : "2d979eec051304180e1b7846", //Portal上注册的包名对应的 appKey.
+                JPUSH_CHANNEL: "developer-default", //暂时填写默认值即可.
+        ]
     }
     buildTypes {
         release {
@@ -86,4 +91,6 @@ dependencies {
     compile files('libs/AMap2DMap_6.0.0_AMapLocation_4.9.0_20200302.aar')
     compile files('libs/sharetrace-android-sdk_v2.0.7.aar')
     implementation 'com.victor:lib:1.0.4'
+    implementation 'cn.jiguang.sdk:jverification:2.7.3'  // 此处以2.7.1 版本为例。
+    implementation 'cn.jiguang.sdk:jcore:2.8.2'  // 此处以JCore 2.8.2 版本为例。
 }

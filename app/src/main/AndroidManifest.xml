@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="mobi.gxsd.gxsd_android_student">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="mobi.gxsd.gxsd_android_student"
+    android:versionCode="100"
+    android:versionName="1.0.0">
+    <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="23" />
 
 
     <!-- 以下是定位SDK基础权限 -->
@@ -35,8 +39,6 @@
     </uses-permission>
 <!--    <uses-permission android:name="android.permission.WAKE_LOCK" >-->
 <!--    </uses-permission>-->
-<!--    <uses-permission android:name="android.permission.WRITE_SETTINGS" >-->
-<!--    </uses-permission>-->
 
 
 
@@ -62,6 +64,10 @@
     <!-- 摄像机-->
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- 一键登录 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
 
     <application
         android:name="mobi.gxsd.gxsd_android.Tools.LocationApplication"
@@ -116,6 +122,10 @@
 <!--            android:name="com.baidu.lbsapi.API_KEY"-->
 <!--            android:value="Ew9xvxWokoz2iTuFqblFW0XxqABla2Eg" />-->
 
+
+        <!-- 一键登录 -->
+        <meta-data android:name="JPUSH_APPKEY" android:value="2d979eec051304180e1b7846"/>
+        <meta-data android:name="JPUSH_CHANNEL" android:value="developer-default"/>
 
         <activity
             android:name="mobi.gxsd.gxsd_android.LaumchActivity"

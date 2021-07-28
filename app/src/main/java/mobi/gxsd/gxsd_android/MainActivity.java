@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -33,8 +34,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.GeolocationPermissions;
@@ -45,7 +50,11 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,11 +75,17 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baoyz.actionsheet.ActionSheet;
 
 import changed.org.apache.commons.codec.binary.Base64;
+import cn.jiguang.verifysdk.api.AuthPageEventListener;
+import cn.jiguang.verifysdk.api.JVerificationInterface;
+import cn.jiguang.verifysdk.api.JVerifyUIClickCallback;
+import cn.jiguang.verifysdk.api.JVerifyUIConfig;
+import cn.jiguang.verifysdk.api.PrivacyBean;
+import cn.jiguang.verifysdk.api.VerifyListener;
 import cn.net.shoot.sharetracesdk.AppData;
 import cn.net.shoot.sharetracesdk.ShareTrace;
 import cn.net.shoot.sharetracesdk.ShareTraceInstallListener;
 import mobi.gxsd.gxsd_android.CheckVersionLib.BaseDialog;
-import mobi.gxsd.gxsd_android.Tools.AnimationUtils;
+import mobi.gxsd.gxsd_android.Tools.KT_AnimationUtils;
 import mobi.gxsd.gxsd_android.Tools.Constants;
 import mobi.gxsd.gxsd_android.Tools.DownPicUtil;
 import mobi.gxsd.gxsd_android.Tools.LocationApplication;
@@ -175,7 +190,7 @@ public class MainActivity extends FragmentActivity implements
     private String cameraFielPath;
     private Uri mImageUri;
 
-    private String CURR_ZIP_VERSION = "1.9.2";
+    private String CURR_ZIP_VERSION = "2.9.2";
     private String WhoCheckVersion;
 
     //检测版本更新
@@ -211,6 +226,8 @@ public class MainActivity extends FragmentActivity implements
     MediaPlayer mMediaPlayer;
 
     private Uri photoUri;
+
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -281,6 +298,7 @@ public class MainActivity extends FragmentActivity implements
 
         mWebView = (WebView) findViewById((R.id.lmwebview));
 
+        requestPermissions();
 
 
 
@@ -347,7 +365,7 @@ public class MainActivity extends FragmentActivity implements
                             public void run() {
                                 if (!launch_HIDDEN) {
                                     launch_HIDDEN = true;
-                                    AnimationUtils.showAndHiddenAnimation(laumch_Layout, AnimationUtils.AnimationState.STATE_HIDDEN, 500);
+                                    KT_AnimationUtils.showAndHiddenAnimation(laumch_Layout, KT_AnimationUtils.AnimationState.STATE_HIDDEN, 500);
                                 }
                             }
                         });
@@ -1121,6 +1139,314 @@ public class MainActivity extends FragmentActivity implements
 
     };
 
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            String[] str = new String[2];
+            str[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+            if (Build.VERSION.SDK_INT >= 30) {
+                str[1] = Manifest.permission.READ_PHONE_NUMBERS;
+            } else {
+                str[1] = Manifest.permission.READ_PHONE_STATE;
+            }
+            requestPermissions(str, 100);
+        }
+    }
+
+    private void setUIConfig(boolean isDialogMode) {
+        JVerifyUIConfig portrait = getPortraitConfig(isDialogMode);
+        // 支持授权页设置横竖屏两套config，在授权页中触发横竖屏切换时，sdk自动选择对应的config加载。
+        JVerificationInterface.setCustomUIWithConfig(portrait, null);
+    }
+
+    public void showLoadingDialog() {
+        dismissLoadingDialog();
+        alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setCancelable(false);
+        alertDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                return keyCode == KeyEvent.KEYCODE_SEARCH || keyCode == KeyEvent.KEYCODE_BACK;
+            }
+        });
+        alertDialog.show();
+        alertDialog.setContentView(R.layout.loading_alert);
+        alertDialog.setCanceledOnTouchOutside(false);
+    }
+
+    public void dismissLoadingDialog() {
+        if (null != alertDialog && alertDialog.isShowing()) {
+            alertDialog.dismiss();
+        }
+    }
+
+    private JVerifyUIConfig getPortraitConfig(boolean isDialogMode) {
+        JVerifyUIConfig.Builder configBuilder = new JVerifyUIConfig.Builder();
+
+        ImageView loadingView = new ImageView(getApplicationContext());
+        loadingView.setImageResource(R.drawable.umcsdk_load_dot_white);
+        RelativeLayout.LayoutParams loadingParam = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        loadingParam.addRule(RelativeLayout.CENTER_IN_PARENT);
+        loadingView.setLayoutParams(loadingParam);
+
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.umcsdk_anim_loading);
+        List<PrivacyBean> beanArrayList = new ArrayList<>();
+
+        if (isDialogMode) {
+            // 自定义返回按钮示例
+            ImageButton sampleReturnBtn = new ImageButton(getApplicationContext());
+            sampleReturnBtn.setImageResource(R.drawable.umcsdk_return_bg);
+            RelativeLayout.LayoutParams returnLP = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            returnLP.setMargins(10, 10, 0, 0);
+            sampleReturnBtn.setLayoutParams(returnLP);
+            configBuilder.setAuthBGImgPath("main_bg")
+                    .setNavColor(0xff0086d0)
+                    .setNavText("登录")
+                    .setNavTextColor(0xffffffff)
+                    .setNavReturnImgPath("umcsdk_return_bg")
+                    .setLogoWidth(70)
+                    .setLogoHeight(70)
+                    .setLogoHidden(false)
+                    .setNumberColor(0xff333333)
+                    .setLogBtnText("本机号码一键登录")
+                    .setLogBtnTextColor(0xffffffff)
+                    .setLogBtnImgPath("umcsdk_login_btn_bg")
+                    .setPrivacyNameAndUrlBeanList(beanArrayList)
+                    .setAppPrivacyColor(0xff666666, 0xff0085d0)
+                    .setUncheckedImgPath("umcsdk_uncheck_image")
+                    .setCheckedImgPath("umcsdk_check_image")
+                    .setSloganTextColor(0xff999999)
+                    .setLogoOffsetY(25)
+                    .setLogoImgPath("logo_cm")
+                    .setNumFieldOffsetY(130)
+                    .setSloganOffsetY(160)
+                    .setLogBtnOffsetY(224)
+                    .setLogBtnWidth(200)
+                    .setNumberSize(18)
+                    .setPrivacyState(true)
+                    .setNavTransparent(false)
+                    .setPrivacyOffsetY(10)
+                    .setNeedCloseAnim(true)
+                    .setNeedStartAnim(true)
+                    .overridePendingTransition(R.anim.activity_slide_enter_bottom, R.anim.activity_slide_exit_bottom)
+                    .setDialogTheme(300, 390, 0, 0, false)
+                    .setLoadingView(loadingView, animation)
+                    .enableHintToast(true, Toast.makeText(getApplicationContext(), "请同意服务条款", Toast.LENGTH_SHORT))
+                    .addCustomView(sampleReturnBtn, true, new JVerifyUIClickCallback() {
+                        @Override
+                        public void onClicked(Context context, View view) {
+                            rotateLoading.stop();
+                        }
+                    });
+        } else {
+            //导航栏按钮示例
+            Button navBtn = new Button(this);
+            navBtn.setText("导航栏按钮");
+            navBtn.setTextColor(0xff3a404c);
+            navBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+            RelativeLayout.LayoutParams navBtnParam = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            navBtnParam.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+            navBtn.setLayoutParams(navBtnParam);
+
+            TextView textView = new TextView(this);
+            textView.setBackgroundColor(Color.RED);
+
+            RelativeLayout.LayoutParams o = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 200);
+            o.topMargin = 200;
+            textView.setLayoutParams(o);
+
+            configBuilder.setAuthBGImgPath("main_bg")
+                    .setNavColor(0xff0086d0)
+                    .setNavText("登录")
+                    .setNavTextColor(0xffffffff)
+                    .setNavReturnImgPath("umcsdk_return_bg")
+                    .setPrivacyNavReturnBtnPath("qq")
+                    .setNeedCloseAnim(true)
+                    .setNeedStartAnim(true)
+                    .setLogoWidth(70)
+                    .setLogoHeight(70)
+                    .setLogoHidden(false)
+                    .setNumberColor(0xff333333)
+                    .setLogBtnText("本机号码一键登录")
+                    .setLogBtnTextColor(0xffffffff)
+                    .setLogBtnImgPath("umcsdk_login_btn_bg")
+                    .setPrivacyNameAndUrlBeanList(beanArrayList)
+                    .setPrivacyWithBookTitleMark(true)
+                    .setPrivacyUnderlineText(true)
+                    .setPrivacyText("登录","同意")
+                    .setAppPrivacyColor(0xff666666, 0xff0085d0)
+                    .setUncheckedImgPath("umcsdk_uncheck_image")
+                    .setCheckedImgPath("umcsdk_check_image")
+                    .setSloganTextColor(0xff999999)
+                    .setLogoOffsetY(50)
+                    .setLogoImgPath("logo_cm")
+                    .setNumFieldOffsetY(190)
+                    .setSloganOffsetY(220)
+                    .setLogBtnOffsetY(254)
+                    .setNumberSize(18)
+                    .setPrivacyState(false)
+                    .setNavTransparent(true)
+                    .setStatusBarHidden(false)
+                    .setStatusBarTransparent(true)
+                    .setVirtualButtonTransparent(true)
+                    .setPrivacyVirtualButtonTransparent(true)
+                    .setPrivacyVirtualButtonColor(Color.YELLOW)
+                    .setVirtualButtonColor(Color.RED)
+                    .setStatusBarDarkMode(true)
+                    .setPrivacyCheckboxInCenter(true)
+                    .setPrivacyCheckboxHidden(false)
+                    .addNavControlView(navBtn, new JVerifyUIClickCallback() {
+                        @Override
+                        public void onClicked(Context context, View view) {
+                            Toast.makeText(context, "导航栏自定义按钮", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+        return configBuilder.build();
+    }
+
+    private void loginAuth(boolean isDialogMode) {
+        boolean verifyEnable = JVerificationInterface.checkVerifyEnable(this);
+        if (!verifyEnable) {
+            Toast.makeText(this, "当前网络环境不支持认证", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        rotateLoading.start();
+
+        setUIConfig(isDialogMode);
+        //autoFinish 可以设置是否在点击登录的时候自动结束授权界面
+        JVerificationInterface.loginAuth(this, true, new VerifyListener() {
+            @Override
+            public void onResult(final int code, final String content, final String operator) {
+                Log.d("LM", "[" + code + "]message=" + content + ", operator=" + operator);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        Toast.makeText(getBaseContext(), "[" + code + "]message=" + content + ", operator=" + operator, Toast.LENGTH_SHORT).show();
+                        new Thread() {
+                            public void run() {
+                                getPhone(content);
+                            }
+                        }.start();
+                        rotateLoading.stop();
+                    }
+                });
+            }
+        }, new AuthPageEventListener() {
+            @Override
+            public void onEvent(int cmd, String msg) {
+                Log.d("LM", "[onEvent]. [" + cmd + "]message=" + msg);
+            }
+        });
+    }
+
+    private void getPhone(String loginToken){
+
+        String Strurl = "https://www.gxsd.mobi/gxsd-prod/system/jiGuang/loginTokenVerify?loginToken=" + loginToken;
+        Log.d("LM", "登录链接: " + Strurl);
+
+        rotateLoading.start();
+        HttpURLConnection conn=null;
+        try {
+
+            URL url = new URL(Strurl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setRequestMethod("GET");
+            if(HttpURLConnection.HTTP_OK==conn.getResponseCode()){
+
+                Log.d("LM","通过token换取手机号成功");
+                InputStream in=conn.getInputStream();
+                String resultStr = Tools.inputStream2String(in);
+                resultStr = URLDecoder.decode(resultStr,"UTF-8");
+
+                try {
+                    JSONObject jsonObj = (JSONObject)(new JSONParser().parse(resultStr));
+                    Log.i("LM",jsonObj.toJSONString() + "\n" + jsonObj.getClass());
+                    long code = (long) jsonObj.get("code");
+                    String message = (String)jsonObj.get("message");
+                    if(code == 200) {
+
+                        String data = (String) jsonObj.get("data");
+                        login(data);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                in.close();
+            }
+            else {
+                Log.i("LM","get请求失败");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally{
+            rotateLoading.stop();
+            conn.disconnect();
+            finish();
+        }
+    }
+
+    private void login(String account){
+
+        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/readUser/login?account=" + account + "&yzm=999999" + "&accountType=1";
+        Log.d("LM", "登录链接: " + Strurl);
+        rotateLoading.start();
+        HttpURLConnection conn=null;
+        try {
+            URL url = new URL(Strurl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setRequestMethod("GET");
+            if(HttpURLConnection.HTTP_OK==conn.getResponseCode()){
+
+                Log.d("LM","登录成功");
+                InputStream in=conn.getInputStream();
+                String resultStr = Tools.inputStream2String(in);
+                resultStr = URLDecoder.decode(resultStr,"UTF-8");
+
+                try {
+                    JSONObject jsonObj = (JSONObject)(new JSONParser().parse(resultStr));
+                    Log.i("LM",jsonObj.toJSONString() + "\n" + jsonObj.getClass());
+                    long code = (long) jsonObj.get("code");
+                    String message = (String)jsonObj.get("message");
+                    if(code == 200) {
+
+                        JSONObject data = (JSONObject) jsonObj.get("data");
+                        String jsonArray = data.toJSONString().toString();
+                        String LMEncoding = URLEncoder.encode(jsonArray);
+                        String WXBind_YES_Ajax_PARAMS = LMEncoding;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String LMurl = "javascript:WXBind_YES_Ajax('" + WXBind_YES_Ajax_PARAMS + "')";
+                                MainActivity.mWebView.loadUrl(LMurl);
+                            }
+                        });
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                in.close();
+            }
+            else {
+                Log.i("LM","get请求失败");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally{
+            rotateLoading.stop();
+            conn.disconnect();
+            finish();
+        }
+    }
+
     // js调用java
     private class JsInterface extends Activity {
         private Context mContext;
@@ -1150,6 +1476,38 @@ public class MainActivity extends FragmentActivity implements
 
                         checkVersion("vue");
 
+                    }
+                }.start();
+            }
+            else if (exceName.equals("一键登录")) {
+                new Thread() {
+                    public void run() {
+                        int result;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (Build.VERSION.SDK_INT == 30) {
+                                result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_NUMBERS);
+                            } else {
+                                result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE);
+                                Log.d("LM", "run: ");
+                            }
+                            if (result != PackageManager.PERMISSION_GRANTED) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        Toast.makeText(mContext, "[错误码:2016]，当前缺少[获取手机号码]权限", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                return;
+                            }
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                loginAuth(true);
+                            }
+                        });
                     }
                 }.start();
             }
@@ -1304,7 +1662,7 @@ public class MainActivity extends FragmentActivity implements
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    AnimationUtils.showAndHiddenAnimation(laumch_Layout, AnimationUtils.AnimationState.STATE_HIDDEN, 500);
+                                    KT_AnimationUtils.showAndHiddenAnimation(laumch_Layout, KT_AnimationUtils.AnimationState.STATE_HIDDEN, 500);
                                 }
                             });
                         }
