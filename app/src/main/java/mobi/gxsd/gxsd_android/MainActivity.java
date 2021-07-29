@@ -122,6 +122,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -1236,7 +1237,7 @@ public class MainActivity extends FragmentActivity implements
                     .addCustomView(sampleReturnBtn, true, new JVerifyUIClickCallback() {
                         @Override
                         public void onClicked(Context context, View view) {
-                            rotateLoading.stop();
+                            rotateLoadHidden();
                         }
                     });
         } else {
@@ -1312,24 +1313,25 @@ public class MainActivity extends FragmentActivity implements
             Toast.makeText(this, "当前网络环境不支持认证", Toast.LENGTH_SHORT).show();
             return;
         }
-        rotateLoading.start();
-
+        rotateLoadShow();
         setUIConfig(isDialogMode);
-        //autoFinish 可以设置是否在点击登录的时候自动结束授权界面
         JVerificationInterface.loginAuth(this, true, new VerifyListener() {
             @Override
             public void onResult(final int code, final String content, final String operator) {
+                if(code == 6002){
+                    rotateLoadHidden();
+                    return;
+                }
                 Log.d("LM", "[" + code + "]message=" + content + ", operator=" + operator);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        Toast.makeText(getBaseContext(), "[" + code + "]message=" + content + ", operator=" + operator, Toast.LENGTH_SHORT).show();
                         new Thread() {
                             public void run() {
                                 getPhone(content);
                             }
                         }.start();
-                        rotateLoading.stop();
+                        rotateLoadHidden();
                     }
                 });
             }
@@ -1341,33 +1343,50 @@ public class MainActivity extends FragmentActivity implements
         });
     }
 
+    private void rotateLoadShow(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                rotateLoading.start();
+            }
+        });
+    }
+
+    private void rotateLoadHidden(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                rotateLoading.stop();
+            }
+        });
+    }
+
     private void getPhone(String loginToken){
 
-        String Strurl = "https://www.gxsd.mobi/gxsd-prod/system/jiGuang/loginTokenVerify?loginToken=" + loginToken;
-        Log.d("LM", "登录链接: " + Strurl);
-
-        rotateLoading.start();
+        String Strurl = "https://www.gxsd.mobi/gxsd-prod/system/jiGuang/loginTokenVerifyBody";
+        rotateLoadShow();
         HttpURLConnection conn=null;
         try {
-
             URL url = new URL(Strurl);
             conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(5000);
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            JSONObject param = new JSONObject();
+            param.put("loginToken", loginToken);
+            OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream(),"UTF-8");
+            writer.write(param.toString());
+            writer.flush();
             if(HttpURLConnection.HTTP_OK==conn.getResponseCode()){
-
-                Log.d("LM","通过token换取手机号成功");
+                Log.d("LM","通过token换取手机号");
                 InputStream in=conn.getInputStream();
                 String resultStr = Tools.inputStream2String(in);
                 resultStr = URLDecoder.decode(resultStr,"UTF-8");
-
                 try {
                     JSONObject jsonObj = (JSONObject)(new JSONParser().parse(resultStr));
                     Log.i("LM",jsonObj.toJSONString() + "\n" + jsonObj.getClass());
                     long code = (long) jsonObj.get("code");
-                    String message = (String)jsonObj.get("message");
                     if(code == 200) {
-
                         String data = (String) jsonObj.get("data");
                         login(data);
                     }
@@ -1379,14 +1398,12 @@ public class MainActivity extends FragmentActivity implements
             else {
                 Log.i("LM","get请求失败");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         finally{
-            rotateLoading.stop();
+            rotateLoadHidden();
             conn.disconnect();
-            finish();
         }
     }
 
@@ -1394,7 +1411,7 @@ public class MainActivity extends FragmentActivity implements
 
         String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/readUser/login?account=" + account + "&yzm=999999" + "&accountType=1";
         Log.d("LM", "登录链接: " + Strurl);
-        rotateLoading.start();
+        rotateLoadShow();
         HttpURLConnection conn=null;
         try {
             URL url = new URL(Strurl);
@@ -1441,9 +1458,8 @@ public class MainActivity extends FragmentActivity implements
             e.printStackTrace();
         }
         finally{
-            rotateLoading.stop();
+            rotateLoadHidden();
             conn.disconnect();
-            finish();
         }
     }
 
@@ -2465,7 +2481,7 @@ public class MainActivity extends FragmentActivity implements
         } else {
             Log.d("LM", "结束录制");
             loadingBgView.setVisibility(View.VISIBLE);
-            rotateLoading.start();
+            rotateLoadShow();
             stopEva();
             String url = "javascript:LM_AndroidIOSToVue_stopRecord('complete')";
             MainActivity.mWebView.loadUrl(url);
@@ -2489,7 +2505,7 @@ public class MainActivity extends FragmentActivity implements
                     @Override
                     public void run() {
                         loadingBgView.setVisibility(View.VISIBLE);
-                        rotateLoading.start();
+                        rotateLoadShow();
                         Toast.makeText(mContext, "音频解析中，请稍候...", Toast.LENGTH_LONG).show();
                     }
                 });
@@ -2592,7 +2608,7 @@ public class MainActivity extends FragmentActivity implements
                         @Override
                         public void run() {
                             loadingBgView.setVisibility(View.INVISIBLE);
-                            rotateLoading.stop();
+                            rotateLoadHidden();
                         }
                     });
                 }
@@ -2649,7 +2665,7 @@ public class MainActivity extends FragmentActivity implements
         public void onResult(EvaluatorResult result, boolean isLast) {
             Log.d("LM", "评测音频采集结束:" + isLast);
             loadingBgView.setVisibility(View.INVISIBLE);
-            rotateLoading.stop();
+            rotateLoadHidden();
             if (isLast) {
                 StringBuilder builder = new StringBuilder();
                 builder.append(result.getResultString());
