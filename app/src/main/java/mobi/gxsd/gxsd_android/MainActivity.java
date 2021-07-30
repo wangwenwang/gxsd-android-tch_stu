@@ -865,6 +865,14 @@ public class MainActivity extends FragmentActivity implements
 
             Log.d("LM", "拍照5.9.1: ");
         }
+        else if (requestCode == 100) {
+
+            SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", MODE_MULTI_PROCESS);
+            String user_info = p.getString("user_info", "");
+            if(user_info.equals("")){
+                quick_login();
+            }
+        }
         else if(requestCode== 1089) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 intentToContact();
@@ -1498,32 +1506,7 @@ public class MainActivity extends FragmentActivity implements
             else if (exceName.equals("一键登录")) {
                 new Thread() {
                     public void run() {
-                        int result;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (Build.VERSION.SDK_INT == 30) {
-                                result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_NUMBERS);
-                            } else {
-                                result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE);
-                                Log.d("LM", "run: ");
-                            }
-                            if (result != PackageManager.PERMISSION_GRANTED) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        Toast.makeText(mContext, "[错误码:2016]，当前缺少[获取手机号码]权限", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                return;
-                            }
-                        }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                loginAuth(true);
-                            }
-                        });
+                        quick_login();
                     }
                 }.start();
             }
@@ -2111,6 +2094,34 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
+    private void quick_login(){
+        int result;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT == 30) {
+                result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_NUMBERS);
+            } else {
+                result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE);
+                Log.d("LM", "run: ");
+            }
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Toast.makeText(mContext, "[错误码:2016]，当前缺少[获取手机号码]权限", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return;
+            }
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                loginAuth(true);
+            }
+        });
+    }
 
     @SuppressLint("WrongConstant")
     @Override
