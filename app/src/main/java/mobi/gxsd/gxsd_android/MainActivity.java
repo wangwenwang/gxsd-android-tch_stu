@@ -191,7 +191,7 @@ public class MainActivity extends FragmentActivity implements
     private String cameraFielPath;
     private Uri mImageUri;
 
-    private String CURR_ZIP_VERSION = "2.9.2";
+    private String CURR_ZIP_VERSION = "2.2.0";
     private String WhoCheckVersion;
 
     //检测版本更新
@@ -1564,7 +1564,7 @@ public class MainActivity extends FragmentActivity implements
                         MainActivity.mWebView.loadUrl(url);
                         Log.d("LM", url);
 
-                        url = "javascript:Device_Ajax('android')";
+                        url = "javascript:Device_Ajax('Android')";
                         MainActivity.mWebView.loadUrl(url);
                         Log.d("LM", url);
                     }
