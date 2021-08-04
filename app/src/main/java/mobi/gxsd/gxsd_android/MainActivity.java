@@ -230,6 +230,8 @@ public class MainActivity extends FragmentActivity implements
 
     private AlertDialog alertDialog;
 
+    boolean has_READ_PHONE_NUMBERS = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -867,11 +869,7 @@ public class MainActivity extends FragmentActivity implements
         }
         else if (requestCode == 100) {
 
-            SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", MODE_MULTI_PROCESS);
-            String user_info = p.getString("user_info", "");
-            if(user_info.equals("")){
-                quick_login();
-            }
+            has_READ_PHONE_NUMBERS = true;
         }
         else if(requestCode== 1089) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -1506,7 +1504,7 @@ public class MainActivity extends FragmentActivity implements
             else if (exceName.equals("一键登录")) {
                 new Thread() {
                     public void run() {
-                        quick_login();
+                        quick_login(false);
                     }
                 }.start();
             }
@@ -2094,7 +2092,15 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
-    private void quick_login(){
+    private void quick_login(boolean auto){
+
+        if(auto){
+            SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", MODE_MULTI_PROCESS);
+            String user_info = p.getString("user_info", "");
+            if(!user_info.equals("")) {
+                return;
+            }
+        }
         int result;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Build.VERSION.SDK_INT == 30) {
@@ -2108,7 +2114,7 @@ public class MainActivity extends FragmentActivity implements
                     @Override
                     public void run() {
 
-                        Toast.makeText(mContext, "[错误码:2016]，当前缺少[获取手机号码]权限", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "缺少[获取手机号码]权限", Toast.LENGTH_SHORT).show();
                     }
                 });
                 return;
@@ -2264,6 +2270,25 @@ public class MainActivity extends FragmentActivity implements
                                                 builder.show();
                                             }
                                         });
+                                    } else{
+                                        new Thread() {
+                                            public void run() {
+                                                // 等待用户赋予【获取手机号码】权限
+                                                for (int i = 0; i < 20; i++) {
+                                                    if (has_READ_PHONE_NUMBERS) {
+                                                        quick_login(true);
+                                                        break;
+                                                    }else{
+                                                        Log.d("LM", "缺少【获取手机号码】权限，已等待" + i + "秒...");
+                                                    }
+                                                    try {
+                                                        sleep(1000);
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }
+                                        }.start();
                                     }
                                 }
                             }
@@ -2354,6 +2379,7 @@ public class MainActivity extends FragmentActivity implements
                             }
                         }
                     }.start();
+                    quick_login(true);
                 } catch (Exception e) {
 
                     Log.d("", "run: ");
