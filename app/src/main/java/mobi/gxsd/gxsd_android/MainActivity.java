@@ -2090,6 +2090,19 @@ public class MainActivity extends FragmentActivity implements
                 }
             });
         }
+
+        // 国网平台
+        @JavascriptInterface
+        public void eduyun() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Intent intent = new Intent(MainActivity.mContext, TwoActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
+        }
     }
 
     private void quick_login(boolean auto){
