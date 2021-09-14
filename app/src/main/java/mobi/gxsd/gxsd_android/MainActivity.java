@@ -1565,6 +1565,10 @@ public class MainActivity extends FragmentActivity implements
                         url = "javascript:Device_Ajax('Android')";
                         MainActivity.mWebView.loadUrl(url);
                         Log.d("LM", url);
+
+                        url = "javascript:PackageName_Ajax('" +  mContext.getPackageName() + "')";
+                        MainActivity.mWebView.loadUrl(url);
+                        Log.d("LM", url);
                     }
                 });
 
@@ -2206,8 +2210,18 @@ public class MainActivity extends FragmentActivity implements
         this.WhoCheckVersion = who;
 
         Log.d("LM", "检查apk及zip版本");
-        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=studentAndroid";
-//        String Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=teacherAndroid";
+        String Strurl = "";
+        switch(mContext.getPackageName()){
+            case "mobi.fdss.student" :
+                Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=studentAndroidFdss";
+                break;
+            case "mobi.gxsd.gxsd_android_student" :
+                Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=studentAndroid";
+                break;
+            case "mobi.gxsd.gxsd_android_teacher" :
+                Strurl = "https://www.gxsd.mobi/gxsd-prod/read/task/getAppUpdateByAppType?appType=teacherAndroid";
+                break;
+        }
 
         HttpURLConnection conn=null;
         try {

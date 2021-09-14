@@ -33,6 +33,14 @@ android {
         // GenSignature：75877a946b1319708e89c3acd17b2df5
         // AppID: wxe6d00f631717f3c1
         // AppSecret: 63f13ceaad54fe8ee638dc08052ba5b6
+        // 飞读速思
+        // 包名：mobi.fdss.student
+        // 微信签名：a741f332af2ddd01202412e91e829722
+        // AppID:
+        // AppSecret:
+        // 签名问答全是1
+        // 签名别名fdss
+        // 签名密码fdss12
         applicationId "mobi.gxsd.gxsd_android_student"
         minSdkVersion 17
         targetSdkVersion 26
