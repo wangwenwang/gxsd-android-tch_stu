@@ -191,7 +191,7 @@ public class MainActivity extends FragmentActivity implements
     private String cameraFielPath;
     private Uri mImageUri;
 
-    private String CURR_ZIP_VERSION = "2.2.3";
+    private String CURR_ZIP_VERSION = "1.9.3";
     private String WhoCheckVersion;
 
     //检测版本更新
