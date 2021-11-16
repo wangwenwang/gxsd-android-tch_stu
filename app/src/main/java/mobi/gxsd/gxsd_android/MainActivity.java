@@ -2117,7 +2117,7 @@ public class MainActivity extends FragmentActivity implements
     private void quick_login(boolean auto){
 
         // 飞读速思APP不需要此功能
-        if(mContext.getPackageName().equals("mobi.fdss.student")){
+        if(mContext.getPackageName().equals("mobi.fdss.student") || mContext.getPackageName().equals("mobi.gxsd.gxsd_android_teacher")){
             return;
         }
 
