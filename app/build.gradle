@@ -5,13 +5,13 @@ android {
     signingConfigs {
 
         release {
-            storeFile file('../gxsd_teacher.jks')
+            storeFile file('../gxsd_student.jks')
             storePassword "gxsd12"
             keyAlias "gxsd"
             keyPassword "gxsd12"
         }
         debug {
-            storeFile file('../gxsd_teacher.jks')
+            storeFile file('../gxsd_student.jks')
             storePassword "gxsd12"
             keyAlias "gxsd"
             keyPassword "gxsd12"
@@ -41,11 +41,11 @@ android {
         // 签名问答全是1
         // 签名别名fdss
         // 签名密码fdss12
-        applicationId "mobi.gxsd.gxsd_android_teacher"
+        applicationId "mobi.gxsd.gxsd_android_student"
         minSdkVersion 17
         targetSdkVersion 26
-        versionCode 15
-        versionName "1.1.1"
+        versionCode 31
+        versionName "1.2.1"
         testInstrumentationRunner "android.support.tete = \"wechat_sdk_tst.runner.AndroidJUnitRunner"
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
