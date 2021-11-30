@@ -142,8 +142,7 @@ import static android.widget.Toast.LENGTH_LONG;
 import static mobi.gxsd.gxsd_android.Tools.Constants.WXLogin_AppID;
 
 
-public class MainActivity extends FragmentActivity implements
-        ActionSheet.ActionSheetListener {
+public class MainActivity extends FragmentActivity {
 
     private final int SDK_PERMISSION_REQUEST = 127;
     private final int RequestAddContact = 1001;
@@ -158,22 +157,15 @@ public class MainActivity extends FragmentActivity implements
 
     String appName;
 
-    String address;
-
-    double lng;
-
     double lat;
 
     // APP当前版本号
     public static String mAppVersion;
 
-
     // 微信开放平台APP_ID
     private static final String APP_ID = WXLogin_AppID;
 
     static public IWXAPI mWxApi;
-
-    public final static String DestFileName = "kdy-qh.apk";
     public final static String ZipFileName = "dist.zip";
 
     // zip解压路径
@@ -194,19 +186,8 @@ public class MainActivity extends FragmentActivity implements
     private String CURR_ZIP_VERSION = "1.9.7";
     private String WhoCheckVersion;
 
-    //检测版本更新
-    private final String TAG_CHECKVERSION = "check_version";
 //    private OrderAsyncHttpClient mClient;
     private final int RequestPermission_STATUS_CODE0 = 8800;
-    private RequestQueue mRequestQueue;
-
-    // 点击物理返回键的次数
-    private int return_key_times = 0;
-
-    private AMapLocationClient locationClient = null;
-
-    //声明AMapLocationClientOption对象
-    public AMapLocationClientOption mLocationOption = null;
 
     // vue已加载完成，关闭启动图
     private Boolean launch_HIDDEN = false;
@@ -302,42 +283,6 @@ public class MainActivity extends FragmentActivity implements
         mWebView = (WebView) findViewById((R.id.lmwebview));
 
         requestPermissions();
-
-
-
-
-
-        /************************** 高德地图H5辅助定位开始 **************************/
-        //初始化AMapLocationClientOption对象
-        mLocationOption = new AMapLocationClientOption();
-        /**
-         * 设置定位场景，目前支持三种场景（签到、出行、运动，默认无场景）
-         */
-        mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.SignIn);
-        if(null != locationClient){
-            locationClient.setLocationOption(mLocationOption);
-            //设置场景模式后最好调用一次stop，再调用start以保证场景模式生效
-            locationClient.stopLocation();
-            locationClient.startLocation();
-        }
-        //设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        //获取一次定位结果：
-        //该方法默认为false。
-        mLocationOption.setOnceLocation(true);
-        //获取最近3s内精度最高的一次定位结果：
-        //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
-        mLocationOption.setOnceLocationLatest(true);
-        //设置是否返回地址信息（默认返回地址信息）
-        mLocationOption.setNeedAddress(true);
-        locationClient = new AMapLocationClient(getApplicationContext());
-        //给定位客户端对象设置定位参数
-        locationClient.setLocationOption(mLocationOption);
-        //启动定位
-        locationClient.startLocation();
-        //建议在设置webView参数之前调用启动H5辅助定位接口
-        locationClient.startAssistantLocation(mWebView);
-        /************************** 高德地图H5辅助定位结束 **************************/
 
         mWebView.getSettings().setTextZoom(100);
 
@@ -1039,113 +984,6 @@ public class MainActivity extends FragmentActivity implements
     }
 
 
-    /*****
-     *
-     * 定位结果回调，重写onReceiveLocation方法，可以直接拷贝如下代码到自己工程中修改
-     *
-     */
-    private BDAbstractLocationListener mListener = new BDAbstractLocationListener() {
-
-        @Override
-        public void onReceiveLocation(BDLocation location) {
-            // 应腾讯应用宝要求，禁用30秒位置刷新
-//            // TODO Auto-generated method stub
-//            if (null != location && location.getLocType() != BDLocation.TypeServerError) {
-//
-//                address = location.getAddrStr();
-//                lng = location.getLongitude();
-//                lat = location.getLatitude();
-//
-//                String url = "javascript:SetCurrAddress('" + address + "','" + lng + "','" + lat + "')";
-//                MainActivity.mWebView.loadUrl(url);
-//                Log.d("LM", url);
-//
-//                StringBuffer sb = new StringBuffer(256);
-//                sb.append("time : ");
-//                /**
-//                 * 时间也可以使用systemClock.elapsedRealtime()方法 获取的是自从开机以来，每次回调的时间；
-//                 * location.getTime() 是指服务端出本次结果的时间，如果位置不发生变化，则时间不变
-//                 */
-//                sb.append(location.getTime());
-//                sb.append("\nlocType : ");// 定位类型
-//                sb.append(location.getLocType());
-//                Log.d("LM", "" + location.getLocType());
-//                sb.append("\nlocType description : ");// *****对应的定位类型说明*****
-//                sb.append(location.getLocTypeDescription());
-//                sb.append("\nlatitude : ");// 纬度
-//                sb.append(location.getLatitude());
-//                sb.append("\nlontitude : ");// 经度
-//                sb.append(location.getLongitude());
-//                sb.append("\nradius : ");// 半径
-//                sb.append(location.getRadius());
-//                sb.append("\nCountryCode : ");// 国家码
-//                sb.append(location.getCountryCode());
-//                sb.append("\nCountry : ");// 国家名称
-//                sb.append(location.getCountry());
-//                sb.append("\ncitycode : ");// 城市编码
-//                sb.append(location.getCityCode());
-//                sb.append("\ncity : ");// 城市
-//                sb.append(location.getCity());
-//                sb.append("\nDistrict : ");// 区
-//                sb.append(location.getDistrict());
-//                sb.append("\nStreet : ");// 街道
-//                sb.append(location.getStreet());
-//                sb.append("\naddr : ");// 地址信息
-//                sb.append(location.getAddrStr());
-//                sb.append("\nUserIndoorState: ");// *****返回用户室内外判断结果*****
-//                sb.append(location.getUserIndoorState());
-//                sb.append("\nDirection(not all devices have value): ");
-//                sb.append(location.getDirection());// 方向
-//                sb.append("\nlocationdescribe: ");
-//                sb.append(location.getLocationDescribe());// 位置语义化信息
-//                sb.append("\nPoi: ");// POI信息
-//                if (location.getPoiList() != null && !location.getPoiList().isEmpty()) {
-//                    for (int i = 0; i < location.getPoiList().size(); i++) {
-//                        Poi poi = (Poi) location.getPoiList().get(i);
-//                        sb.append(poi.getName() + ";");
-//                    }
-//                }
-//                if (location.getLocType() == BDLocation.TypeGpsLocation) {// GPS定位结果
-//                    sb.append("\nspeed : ");
-//                    sb.append(location.getSpeed());// 速度 单位：km/h
-//                    sb.append("\nsatellite : ");
-//                    sb.append(location.getSatelliteNumber());// 卫星数目
-//                    sb.append("\nheight : ");
-//                    sb.append(location.getAltitude());// 海拔高度 单位：米
-//                    sb.append("\ngps status : ");
-//                    sb.append(location.getGpsAccuracyStatus());// *****gps质量判断*****
-//                    sb.append("\ndescribe : ");
-//                    sb.append("gps定位成功");
-//                } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {// 网络定位结果
-//                    // 运营商信息
-//                    if (location.hasAltitude()) {// *****如果有海拔高度*****
-//                        sb.append("\nheight : ");
-//                        sb.append(location.getAltitude());// 单位：米
-//                    }
-//                    sb.append("\noperationers : ");// 运营商信息
-//                    sb.append(location.getOperators());
-//                    sb.append("\ndescribe : ");
-//                    sb.append("网络定位成功");
-//                } else if (location.getLocType() == BDLocation.TypeOffLineLocation) {// 离线定位结果
-//                    sb.append("\ndescribe : ");
-//                    sb.append("离线定位成功，离线定位结果也是有效的");
-//                } else if (location.getLocType() == BDLocation.TypeServerError) {
-//                    sb.append("\ndescribe : ");
-//                    sb.append("服务端网络定位失败，可以反馈IMEI号和大体定位时间到loc-bugs@baidu.com，会有人追查原因");
-//                } else if (location.getLocType() == BDLocation.TypeNetWorkException) {
-//                    sb.append("\ndescribe : ");
-//                    sb.append("网络不同导致定位失败，请检查网络是否通畅");
-//                } else if (location.getLocType() == BDLocation.TypeCriteriaException) {
-//                    sb.append("\ndescribe : ");
-//                    sb.append("无法获取有效定位依据导致定位失败，一般是由于手机的原因，处于飞行模式下一般会造成这种结果，可以试着重启手机");
-//                }
-//
-//                locationService.stop();
-//            }
-        }
-
-    };
-
     private void requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
@@ -1825,67 +1663,6 @@ public class MainActivity extends FragmentActivity implements
         }
 
         @JavascriptInterface
-        public void callAndroid(String exceName, final String lng1, final String lat1, final String address1) {
-
-            Log.d("LM", "执行:" + exceName + "    " + "经度:" + lng + "    " + "纬度:" + lat + "    " + "地址:" + address);
-
-            if (exceName.equals("导航")) {
-
-                Log.d("LM", "导航");
-
-                lng = Double.valueOf(lng1).doubleValue();
-                lat = Double.valueOf(lat1).doubleValue();
-                address = address1;
-
-
-                new Thread() {
-
-                    public void run() {
-
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                List list = new ArrayList();
-                                if (SystemUtil.isInstalled(mContext, "com.autonavi.minimap")) {
-
-                                    list.add("高德地图");
-                                }
-                                if (SystemUtil.isInstalled(mContext, "com.baidu.BaiduMap")) {
-
-                                    list.add("百度地图");
-                                }
-
-                                if (list.size() == 2) {
-
-                                    ActionSheet.createBuilder(MainActivity.this, getSupportFragmentManager())
-                                            .setCancelButtonTitle("取消")
-                                            .setOtherButtonTitles("高德地图", "百度地图")
-                                            .setCancelableOnTouchOutside(true)
-                                            .setListener(MainActivity.this).show();
-                                } else if (list.size() == 1) {
-
-                                    if (list.get(0).equals("高德地图")) {
-
-                                        Log.d("LM", "调用高德地图");
-                                        minimap(mContext, lng, lat, address, appName);
-                                    } else if (list.get(0).equals("百度地图")) {
-
-                                        Log.d("LM", "调用百度地图");
-                                        BaiduMap(mContext, lng, lat, address, appName);
-                                    }
-                                } else {
-
-                                    Toast.makeText(mContext, "未检索到本机已安装‘百度地图’或‘高德地图’App", LENGTH_LONG).show();
-                                }
-                            }
-                        });
-                    }
-                }.start();
-            }
-        }
-        @JavascriptInterface
         public void share_url(final String url, final String title, final String description) {
 
             Log.d("LM", "微信分享网页");
@@ -2154,65 +1931,6 @@ public class MainActivity extends FragmentActivity implements
                 loginAuth(true);
             }
         });
-    }
-
-    @SuppressLint("WrongConstant")
-    @Override
-    public void onOtherButtonClick(ActionSheet actionSheet, int index) {
-
-        if(index == 0) {
-
-            Log.d("LM", "调用高德地图");
-            minimap(mContext, lng, lat, address, appName);
-        }else if(index == 1) {
-
-            Log.d("LM", "调用百度地图");
-            BaiduMap(mContext, lng, lat, address, appName);
-        }
-    }
-
-    @Override
-    public void onDismiss(ActionSheet actionSheet, boolean isCancel) {
-
-    }
-
-    private static void BaiduMap(Context mContext, double lng, double lat, String address, String appName) {
-
-        //跳转到百度导航
-        try {
-            Intent baiduintent = Intent.parseUri("intent://map/direction?" +
-                    "origin=" + "" +
-                    "&destination=" + address +
-                    "&mode=driving" +
-                    "&src=Name|AppName" +
-                    "#Intent;scheme=bdapp;package=com.baidu.BaiduMap;end", 0);
-            mContext.startActivity(baiduintent);
-        } catch (URISyntaxException e) {
-            Log.d("LM", "URISyntaxException:" + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private static void minimap(Context mContext, double lng, double lat, String address, String appName) {
-        //跳转到高德导航
-        Intent autoIntent = new Intent();
-        try {
-            autoIntent.setData(Uri
-                    .parse("androidamap://route?" +
-                            "sourceApplication=" + appName +
-                            "&slat=" + "" +
-                            "&slon=" + "" +
-                            "&dlat=" + lat +
-                            "&dlon=" + lng +
-                            "&dname=" + address +
-                            "&dev=0" +
-                            "&m=2" +
-                            "&t=0"
-                    ));
-        } catch (Exception e) {
-            Log.i("LM", "高德地图异常" + e);
-        }
-        mContext.startActivity(autoIntent);
     }
 
     public void checkVersion(String who) {
