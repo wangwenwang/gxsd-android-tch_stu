@@ -213,6 +213,21 @@ public class MainActivity extends FragmentActivity {
 
     boolean has_READ_PHONE_NUMBERS = false;
 
+
+    public void allowClicked(View view) {
+        this.initAPP();
+        this.hiddenAuthUI();
+    }
+
+    public void hiddenAuthUI() {
+        RelativeLayout rl = (RelativeLayout) findViewById((R.id.authTip));
+        rl.setVisibility(View.INVISIBLE);
+    }
+
+    public void disableClicked(View view) {
+        Toast.makeText(this, "不允许存储功能将无法使用此程序", Toast.LENGTH_LONG).show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -226,14 +241,18 @@ public class MainActivity extends FragmentActivity {
         loadingBgView.setAlpha(0.2f);
 
         appNav = this.getIntent().getStringExtra("appNav");
+        mContext = this;
+        this.hiddenAuthUI();
+        this.initAPP();
+    }
 
+    public void initAPP() {
         // 修复targetSdkVersion为28时，拍照闪退问题
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy( builder.build());
         }
 
-        mContext = this;
         Log.d("LM", "程序启动");
 
         new Thread() {
