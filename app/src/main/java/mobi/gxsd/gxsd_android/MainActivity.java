@@ -183,7 +183,7 @@ public class MainActivity extends FragmentActivity {
     private String cameraFielPath;
     private Uri mImageUri;
 
-    private String CURR_ZIP_VERSION = "1.9.7";
+    private String CURR_ZIP_VERSION = "2.0.7";
     private String WhoCheckVersion;
 
 //    private OrderAsyncHttpClient mClient;
