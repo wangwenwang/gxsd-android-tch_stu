@@ -217,6 +217,7 @@ public class MainActivity extends FragmentActivity {
     public void allowClicked(View view) {
         this.initAPP();
         this.hiddenAuthUI();
+        this.setAuthorized();
     }
 
     public void hiddenAuthUI() {
@@ -242,8 +243,21 @@ public class MainActivity extends FragmentActivity {
 
         appNav = this.getIntent().getStringExtra("appNav");
         mContext = this;
-        this.hiddenAuthUI();
-        this.initAPP();
+        if(this.getAuthorized()) {
+            this.allowClicked(null);
+        }
+    }
+
+    // 获取授权前提示
+    public boolean getAuthorized() {
+        SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", Context.MODE_MULTI_PROCESS);
+        return p.getBoolean("authorized", false);
+    }
+
+    // 设置授权前提示
+    public void setAuthorized() {
+        SharedPreferences p = mContext.getSharedPreferences("w_UserInfo", Context.MODE_MULTI_PROCESS);
+        p.edit().putBoolean("authorized", true).commit();
     }
 
     public void initAPP() {
