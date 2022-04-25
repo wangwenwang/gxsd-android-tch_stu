@@ -749,7 +749,7 @@ public class MainActivity extends FragmentActivity {
             photoUri = getDestinationUri();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 // 适配Android 7.0文件权限，通过FileProvider创建一个content类型的Uri
-                photoUri = FileProvider.getUriForFile(this, "mobi.gxsd.gxsd_android.fileprovider", new File(photoUri.getPath()));
+                photoUri = FileProvider.getUriForFile(this, "mobi.gxsd.gxsd_android_teacher.fileprovider", new File(photoUri.getPath()));
             } else {
                 photoUri = getDestinationUri();
             }
