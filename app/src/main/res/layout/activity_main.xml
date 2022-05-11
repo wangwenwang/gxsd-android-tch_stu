@@ -6,6 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <LinearLayout
+        android:id="@+id/loadingBgView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:visibility="invisible"></LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/launch_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"></LinearLayout>
+
     <WebView
         android:id="@+id/lmwebview"
         android:layout_width="0dp"
@@ -15,70 +30,189 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></WebView>
 
-    <LinearLayout
-        android:id="@+id/loadingBgView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000"
-        android:visibility="invisible"
-        android:clickable="true"
-        android:orientation="horizontal"></LinearLayout>
-
     <com.victor.loading.rotate.RotateLoading
         android:id="@+id/rotateloading"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        app:loading_width="5dp"
-        app:loading_color="#000"
         android:layout_centerInParent="true"
-        tools:ignore="MissingConstraints"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/launch_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:loading_color="#000"
+        app:loading_width="5dp"
+        tools:ignore="MissingConstraints" />
 
 
     <com.zhy.android.percent.support.PercentRelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/authTip"
+        android:id="@+id/authTipContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/auth_container_bg"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         tools:ignore="MissingConstraints">
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="300dp"
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
             android:layout_centerHorizontal="true"
-            android:padding="15dp"
-            android:background="@color/default_bg"
-            android:text="是否允许程序使用存储功能、收集IMEI、设备MAC地址和软件安装列表、通讯录和短信的行为" />
-        <com.zhy.android.percent.support.PercentRelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true">
-            <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="400dp"
-                android:layout_marginLeft="300px"
-                android:onClick="disableClicked"
-                android:text="不允许" />
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="400dp"
-                android:onClick="allowClicked"
-                android:text="允许" />
-        </com.zhy.android.percent.support.PercentRelativeLayout>
+            android:layout_centerVertical="true"
+            android:background="@drawable/auth_content_bg"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp">
+
+            <com.zhy.android.percent.support.PercentRelativeLayout
+                android:id="@+id/authTipContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="MissingConstraints">
+
+                <TextView
+                    android:id="@+id/text0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginTop="30dp"
+                    android:text="温馨提示"
+                    android:textColor="#333"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text0"
+                    android:layout_centerHorizontal="true"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="1、为给您提供发布服务，我们可能会申请手机存储权限、摄像头权限、麦克风权限；"
+                    android:textColor="#333"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:id="@+id/text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text1"
+                    android:layout_marginTop="5dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="2、为了账号安全，我们会申请系统设备权限收集设备信息；"
+                    android:textColor="#333"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:id="@+id/text3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="3、为了提供一键登录功能，我们会收集IMEI、设备MAC地址和软件安装列表、通讯录和短信；"
+                    android:textColor="#333"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:id="@+id/text4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text3"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="4、我们会努力采取各种安全技术保护您的个人信息，未经您同意，我们不会从第三方获取、共享或对外提供您的信息；"
+                    android:textColor="#333"
+                    android:textSize="12dp" />
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text4"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp">
+
+                    <TextView
+                        android:id="@+id/text5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="您可以阅读完整版"
+                        android:textColor="#333"
+                        android:textSize="12dp"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/text5.1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="agreementClicked"
+                        android:text="用户协议"
+                        android:textColor="#5b92e1"
+                        android:textSize="12dp"
+                        android:textStyle="bold"
+                        app:layout_constraintLeft_toRightOf="@+id/text5"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/text5.2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="和"
+                        android:textColor="#333"
+                        android:textSize="12dp"
+                        android:textStyle="bold"
+                        app:layout_constraintLeft_toRightOf="@+id/text5.1"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/text5.3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="privacyClicked"
+                        android:text="隐私政策"
+                        android:textColor="#5b92e1"
+                        android:textSize="12dp"
+                        android:textStyle="bold"
+                        app:layout_constraintLeft_toRightOf="@+id/text5.2"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <com.zhy.android.percent.support.PercentRelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:paddingBottom="25dp">
+
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="120dp"
+                        android:layout_height="37dp"
+                        android:layout_marginLeft="140dp"
+                        android:background="@drawable/agree_btn"
+                        android:onClick="allowClicked"
+                        android:text="同意"
+                        android:textColor="#fff"
+                        android:textSize="13dp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/button1"
+                        android:layout_width="120dp"
+                        android:layout_height="37dp"
+                        android:layout_marginRight="140dp"
+                        android:background="@drawable/disagree_btn"
+                        android:onClick="disableClicked"
+                        android:text="不同意"
+                        android:textColor="#999"
+                        android:textSize="13dp"
+                        android:textStyle="bold" />
+                </com.zhy.android.percent.support.PercentRelativeLayout>
+            </com.zhy.android.percent.support.PercentRelativeLayout>
+        </android.support.constraint.ConstraintLayout>
     </com.zhy.android.percent.support.PercentRelativeLayout>
+
 
 </android.support.constraint.ConstraintLayout>

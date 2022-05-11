@@ -221,12 +221,26 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void hiddenAuthUI() {
-        RelativeLayout rl = (RelativeLayout) findViewById((R.id.authTip));
+        RelativeLayout rl = (RelativeLayout) findViewById((R.id.authTipContainer));
         rl.setVisibility(View.INVISIBLE);
     }
 
     public void disableClicked(View view) {
         Toast.makeText(this, "不允许存储功能将无法使用此程序", Toast.LENGTH_LONG).show();
+    }
+
+    public void agreementClicked(View view) {
+        Intent intent = new Intent();
+        intent.putExtra("webview_url", "https://www.gxsd.mobi/gxsdStudentApk/html/protocol.html");
+        intent.setClass(MainActivity.mContext, AgreementActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    public void privacyClicked(View view) {
+        Intent intent = new Intent();
+        intent.putExtra("webview_url", "https://www.gxsd.mobi/gxsdStudentApk/html/privacy_policy.html");
+        intent.setClass(MainActivity.mContext, AgreementActivity.class);
+        mContext.startActivity(intent);
     }
 
     @Override
