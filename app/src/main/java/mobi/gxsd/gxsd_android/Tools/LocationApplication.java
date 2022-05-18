@@ -44,14 +44,41 @@ public class LocationApplication extends Application {
         /***
          * 初始化定位sdk，建议在Application中创建
          */
-        locationService = new LocationService(getApplicationContext());
-        mVibrator =(Vibrator)getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
+//        locationService = new LocationService(getApplicationContext());
+//        mVibrator =(Vibrator)getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
+        if(!LocationApplication.instance.getPackageName().equals("mobi.gxsd.gxsd_android_teacher")) {
+            // 初始化ShareTrace
+            ShareTrace.init(this);
+            JVerificationInterface.init(this);
+            JVerificationInterface.setDebugMode(true);
+        }
 
-        // 初始化ShareTrace
-        ShareTrace.init(this);
-        JVerificationInterface.init(this);
-        JVerificationInterface.setDebugMode(true);
-
+//        LocationApplication tContext = this;
+//        Log.d("LM", "申请IMSI权限");
+//        try {
+//            new Thread() {
+//                public void run() {
+//                    while (true){
+//                        Log.d("LM", "777777777777: ");
+//                        try {
+//                            sleep(1000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        Log.d("LM", Tools.getAgreeGetAuth(LocationApplication.instance).toString());
+//                        if(Tools.getAgreeGetAuth(LocationApplication.instance)) {
+//                            // 初始化ShareTrace
+//                            ShareTrace.init(LocationApplication.instance);
+//                            JVerificationInterface.init(LocationApplication.instance);
+//                            JVerificationInterface.setDebugMode(true);
+//                            break;
+//                        }
+//                    }
+//                }
+//            }.start();
+//        } catch (Exception e) {
+//            Log.d("LM", "initPermissi: " + e.getMessage());
+//        }
     }
 
     /**

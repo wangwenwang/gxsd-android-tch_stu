@@ -218,6 +218,7 @@ public class MainActivity extends FragmentActivity {
         this.initAPP();
         this.hiddenAuthUI();
         this.setAuthorized();
+        Tools.setAgreeGetAuth(LocationApplication.getAppContext(), true);
     }
 
     public void hiddenAuthUI() {
@@ -1037,10 +1038,12 @@ public class MainActivity extends FragmentActivity {
             String[] str = new String[2];
             str[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-            if (Build.VERSION.SDK_INT >= 30) {
-                str[1] = Manifest.permission.READ_PHONE_NUMBERS;
-            } else {
-                str[1] = Manifest.permission.READ_PHONE_STATE;
+            if(!mContext.getPackageName().equals("mobi.gxsd.gxsd_android_teacher")) {
+                if (Build.VERSION.SDK_INT >= 30) {
+                    str[1] = Manifest.permission.READ_PHONE_NUMBERS;
+                } else {
+                    str[1] = Manifest.permission.READ_PHONE_STATE;
+                }
             }
             requestPermissions(str, 100);
         }

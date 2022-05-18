@@ -56,6 +56,28 @@ public class Tools {
     }
 
     /**
+     * 设置同意获取权限
+     * @param mContext 上下文
+     * @throws Exception
+     */
+    public static void setAgreeGetAuth(Context mContext, boolean tag) {
+
+        SharedPreferences pre_appinfo = mContext.getSharedPreferences("w_AppInfo", MODE_MULTI_PROCESS);
+        pre_appinfo.edit().putBoolean("AgreeGetAuth", tag).commit();
+    }
+
+    /**
+     * 是否同意获取权限
+     * @param mContext 上下文
+     * @return
+     */
+    public static Boolean getAgreeGetAuth(Context mContext) {
+
+        SharedPreferences pre_appinfo = mContext.getSharedPreferences("w_AppInfo", MODE_MULTI_PROCESS);
+        return pre_appinfo.getBoolean("AgreeGetAuth", false);
+    }
+
+    /**
      * 获取版本号名称
      *
      * @param context 上下文

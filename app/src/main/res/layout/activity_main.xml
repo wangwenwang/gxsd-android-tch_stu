@@ -102,27 +102,27 @@
                     android:textColor="#333"
                     android:textSize="12dp" />
 
+<!--                <TextView-->
+<!--                    android:id="@+id/text3"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_below="@+id/text2"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:layout_marginTop="5dp"-->
+<!--                    android:lineSpacingMultiplier="1.2"-->
+<!--                    android:text="3、为了提供一键登录功能，我们会收集IMEI、设备MAC地址和软件安装列表、通讯录和短信；"-->
+<!--                    android:textColor="#333"-->
+<!--                    android:textSize="12dp" />-->
+
                 <TextView
-                    android:id="@+id/text3"
+                    android:id="@+id/text4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/text2"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
                     android:lineSpacingMultiplier="1.2"
-                    android:text="3、为了提供一键登录功能，我们会收集IMEI、设备MAC地址和软件安装列表、通讯录和短信；"
-                    android:textColor="#333"
-                    android:textSize="12dp" />
-
-                <TextView
-                    android:id="@+id/text4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/text3"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp"
-                    android:lineSpacingMultiplier="1.2"
-                    android:text="4、我们会努力采取各种安全技术保护您的个人信息，未经您同意，我们不会从第三方获取、共享或对外提供您的信息；"
+                    android:text="3、我们会努力采取各种安全技术保护您的个人信息，未经您同意，我们不会从第三方获取、共享或对外提供您的信息；"
                     android:textColor="#333"
                     android:textSize="12dp" />
 
