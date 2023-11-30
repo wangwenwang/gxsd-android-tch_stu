@@ -163,18 +163,18 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
-        <activity android:name="mobi.gxsd.gxsd_android_teacher.wxapi.WXEntryActivity" android:exported="true" />
+        <activity android:name="mobi.gxsd.gxsd_android_student.wxapi.WXEntryActivity" android:exported="true" />
         <activity android:name="mobi.gxsd.gxsd_android_student.wxapi.WXPayEntryActivity" android:exported="true" android:launchMode="singleTop"/>
 
         <!--ShareTrace-->
         <!--老师端-->
-        <meta-data
-            android:name="com.sharetrace.APP_KEY"
-            android:value="88e7bea3c760a53b"/>
-        <!--学生端-->
 <!--        <meta-data-->
 <!--            android:name="com.sharetrace.APP_KEY"-->
-<!--            android:value="9c474737756d117f"/>-->
+<!--            android:value="88e7bea3c760a53b"/>-->
+        <!--学生端-->
+        <meta-data
+            android:name="com.sharetrace.APP_KEY"
+            android:value="9c474737756d117f"/>
 
     </application>
 
