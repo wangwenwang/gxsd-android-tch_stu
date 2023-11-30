@@ -10,7 +10,7 @@ import android.content.Context;
 import android.os.Vibrator;
 
 import cn.jiguang.verifysdk.api.JVerificationInterface;
-import cn.net.shoot.sharetracesdk.ShareTrace;
+//import cn.net.shoot.sharetracesdk.ShareTrace;
 
 /**
  * 主Application，所有百度定位SDK的接口说明请参考线上文档：http://developer.baidu.com/map/loc_refer/index.html
@@ -48,7 +48,7 @@ public class LocationApplication extends Application {
 //        mVibrator =(Vibrator)getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
         if(!LocationApplication.instance.getPackageName().equals("mobi.gxsd.gxsd_android_teacher")) {
             // 初始化ShareTrace
-            ShareTrace.init(this);
+//            ShareTrace.init(this);
             JVerificationInterface.init(this);
             JVerificationInterface.setDebugMode(true);
         }

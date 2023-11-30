@@ -62,8 +62,8 @@ import com.allenliu.versionchecklib.v2.AllenVersionChecker;
 import com.allenliu.versionchecklib.v2.builder.DownloadBuilder;
 import com.allenliu.versionchecklib.v2.builder.UIData;
 import com.allenliu.versionchecklib.v2.callback.CustomVersionDialogListener;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
+//import com.amap.api.location.AMapLocationClient;
+//import com.amap.api.location.AMapLocationClientOption;
 import com.android.volley.RequestQueue;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -81,9 +81,9 @@ import cn.jiguang.verifysdk.api.JVerifyUIClickCallback;
 import cn.jiguang.verifysdk.api.JVerifyUIConfig;
 import cn.jiguang.verifysdk.api.PrivacyBean;
 import cn.jiguang.verifysdk.api.VerifyListener;
-import cn.net.shoot.sharetracesdk.AppData;
-import cn.net.shoot.sharetracesdk.ShareTrace;
-import cn.net.shoot.sharetracesdk.ShareTraceInstallListener;
+//import cn.net.shoot.sharetracesdk.AppData;
+//import cn.net.shoot.sharetracesdk.ShareTrace;
+//import cn.net.shoot.sharetracesdk.ShareTraceInstallListener;
 import mobi.gxsd.gxsd_android.CheckVersionLib.BaseDialog;
 import mobi.gxsd.gxsd_android.Tools.KT_AnimationUtils;
 import mobi.gxsd.gxsd_android.Tools.Constants;
@@ -1844,44 +1844,44 @@ public class MainActivity extends FragmentActivity {
                 @Override
                 public void run() {
 
-                    ShareTrace.getInstallTrace(new ShareTraceInstallListener() {
-                        @Override
-                        public void onInstall(AppData data) {
-                            if(data.getParamsData() != null){
-
-                                String query = data.getParamsData();
-                                Map query_pairs = new HashMap<String, String>();
-                                if(query.length()>0) {
-                                    final String[] pairs = query.split("&");
-                                    for (String pair : pairs) {
-                                        final int idx = pair.indexOf("=");
-                                        //如果等号存在且不在字符串两端，取出key、value
-                                        if (idx > 0 && idx < pair.length() - 1) {
-                                            String key = null;
-                                            try {
-                                                key = URLDecoder.decode(pair.substring(0, idx), "UTF-8");
-                                            } catch (UnsupportedEncodingException e) {
-                                                e.printStackTrace();
-                                            }
-                                            String value = null;
-                                            try {
-                                                value = URLDecoder.decode(pair.substring(idx + 1), "UTF-8");
-                                            } catch (UnsupportedEncodingException e) {
-                                                e.printStackTrace();
-                                            }
-                                            query_pairs.put(key, value);
-                                        }
-                                    }
-                                }
-                                String url = "javascript:LM_AndroidIOSToVue_Recommend('" + (String) query_pairs.get("channel") + "','" + (String) query_pairs.get("tel") + "')";
-                                MainActivity.mWebView.loadUrl(url);
-                            }
-                        }
-                        @Override
-                        public void onError(int code, String msg) {
-                            Toast.makeText(mContext, "Get install trace info error. code=" + code + ",msg=" + msg, LENGTH_LONG).show();
-                        }
-                    });
+//                    ShareTrace.getInstallTrace(new ShareTraceInstallListener() {
+//                        @Override
+//                        public void onInstall(AppData data) {
+//                            if(data.getParamsData() != null){
+//
+//                                String query = data.getParamsData();
+//                                Map query_pairs = new HashMap<String, String>();
+//                                if(query.length()>0) {
+//                                    final String[] pairs = query.split("&");
+//                                    for (String pair : pairs) {
+//                                        final int idx = pair.indexOf("=");
+//                                        //如果等号存在且不在字符串两端，取出key、value
+//                                        if (idx > 0 && idx < pair.length() - 1) {
+//                                            String key = null;
+//                                            try {
+//                                                key = URLDecoder.decode(pair.substring(0, idx), "UTF-8");
+//                                            } catch (UnsupportedEncodingException e) {
+//                                                e.printStackTrace();
+//                                            }
+//                                            String value = null;
+//                                            try {
+//                                                value = URLDecoder.decode(pair.substring(idx + 1), "UTF-8");
+//                                            } catch (UnsupportedEncodingException e) {
+//                                                e.printStackTrace();
+//                                            }
+//                                            query_pairs.put(key, value);
+//                                        }
+//                                    }
+//                                }
+//                                String url = "javascript:LM_AndroidIOSToVue_Recommend('" + (String) query_pairs.get("channel") + "','" + (String) query_pairs.get("tel") + "')";
+//                                MainActivity.mWebView.loadUrl(url);
+//                            }
+//                        }
+//                        @Override
+//                        public void onError(int code, String msg) {
+//                            Toast.makeText(mContext, "Get install trace info error. code=" + code + ",msg=" + msg, LENGTH_LONG).show();
+//                        }
+//                    });
                 }
             });
         }
